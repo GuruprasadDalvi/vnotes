@@ -16,8 +16,35 @@
       {
         "command": "vnotes.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "vnotes.addEntry",
+        "title": "Add VNote"
       }
-    ]
+    ],
+    "viewsWelcome": [
+      {
+        "view": "vnotesView",
+        "contents": "[Add New VNote](command:vnotes.addEntry)"
+      }
+    ],
+    "views": {
+      "vnotes": [
+        {
+          "id": "vnotesView",
+          "name": "VNotes View"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vnotes",
+          "title": "vnotes",
+          "icon": "src/resources/vnotes.svg"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

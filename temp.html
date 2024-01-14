@@ -1,0 +1,103 @@
+<html>
+  <head>
+    <style>
+      body {
+        font-family: sans-serif;
+      }
+      h1 {
+        margin-bottom: 0;
+      }
+      .todoList {
+        list-style-type: none;
+        list-style-position: inside;
+        padding-left: 0;
+      }
+      .checked {
+        text-decoration: line-through;
+        text-decoration-color: red;
+      }
+      .text {
+        width: 100ch;
+        min-width: 0;
+        background-color: transparent;
+        border: 0;
+        padding: 10px;
+        margin: 0;
+        outline: none;
+        resize: none;
+        font-family: inherit;
+        font-size: 15px;
+        color: black;
+        overflow: hidden;
+      }
+      .add_button {
+        width: 20px;
+        height: 20px;
+        background-color: #ffffff59;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        margin-left: 10px;
+        margin-right: 10px;
+        opacity: 0; /* make the button invisible initially */
+        transition: opacity 0.3s;
+      }
+      .container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+      .container:hover .add_button {
+        opacity: 1; /* make the button visible when the container is hovered */
+      }
+      h2,
+      h3,
+      h4 {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>test0</h1>
+    Created on: 1/13/2024, 8:00:05 PM<br />
+    Last updated on: 1/14/2024, 12:03:09 PM<br />
+    <hr />
+    <div class="container">
+      <div class="add_button">+</div>
+      <h2>h1 content</h2>
+    </div>
+    <h3>h2 Design</h3>
+    <h4>h3 Design</h4>
+    <ul>
+      <li>Note Design</li>
+      <li>Note Design</li>
+      <li>Note Design</li>
+      <li>Note Design</li>
+      <li>Note Design</li>
+    </ul>
+    <ul class="todoList">
+      <li class="checked"><input type="checkbox" checked />Note Design</li>
+      <li><input type="checkbox" />Note Design</li>
+      <li><input type="checkbox" />Note Design</li>
+      <li><input type="checkbox" />Note Design</li>
+      <li><input type="checkbox" />Note Design</li>
+    </ul>
+    <input
+      id="11"
+      class="text"
+      placeholder="type '/' to enter command mode"
+      value="normal text"
+    />
+    <br />
+    <input
+      type="text"
+      id="newItem"
+      placeholder="type '/' to enter command mode"
+      class="text"
+      onchange="{}"
+    />
+    <br />
+  </body>
+</html>
