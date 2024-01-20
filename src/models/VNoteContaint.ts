@@ -2,6 +2,17 @@ export abstract class VNoteContent {
   toHTML(): string {
     throw new Error("Not implemented");
   }
+  fromJSON(data: any): VNoteContent {
+    throw new Error("Not implemented");
+  }
+  toObject(): any {
+    throw new Error("Not implemented");
+  }
+  parseID(map:  Map<number, VNoteContent>): any {
+    console.log("Not implemented");
+    console.log(JSON.stringify(map));
+    throw new Error("Not implemented in abstract class with map");
+  }
 
   static fromJSON(data: any): VNoteContent {
     if (data.type === "text") {
@@ -10,18 +21,18 @@ export abstract class VNoteContent {
       let list: TextContent[] = data.content.map((item: any) => {
         return new TextContent(item.content, item.id);
       });
-      return new ListContent(list);
+      return new ListContent(list, data.id);
     } else if (data.type === "todoList") {
         let list: TodoItem[] = data.content.map((item: any) => {
             return new TodoItem(item.content, item.done, item.id);
         });
-      return new TodoListContent(list);
+      return new TodoListContent(list, data.id);
     }  else if (data.type === "h1") {
-      return new Heading1Content(data.content);
+      return new Heading1Content(data.content, data.id);
     } else if (data.type === "h2") {
-      return new Heading2Content(data.content);
+      return new Heading2Content(data.content, data.id);
     } else if (data.type === "h3") {
-      return new Heading3Content(data.content);
+      return new Heading3Content(data.content, data.id);
     } else {
       throw new Error("Unknown type");
     }
@@ -44,19 +55,31 @@ export class TextContent extends VNoteContent {
     return new TextContent(data.text, data.id);
   }
   toJSON(): string {
-    return JSON.stringify(this);
+    return JSON.stringify({ content: this.text, id: this.id, type: "text" });
+  }
+  toObject(): any {
+    return this.text
+  }
+
+  parseID(map:  Map<number, VNoteContent>) {
+    if (map.has(this.id)) {
+      throw new Error("Duplicate id in text");
+    }
+    map.set(this.id, this);
   }
 }
 
 export class ListContent extends VNoteContent {
   list: TextContent[];
-  constructor(list: TextContent[]) {
+  id: number;
+  constructor(list: TextContent[], id: number) {
     super();
     this.list = list;
+    this.id = id;
   }
 
   toHTML(): string {
-    let html = '<ul>';
+    let html = `<ul id = "${this.id}">`;
     for (let i = 0; i < this.list.length; i++) {
       const element = this.list[i];
       html += `<div class="container"> <div class="add_button">+</div><li>${element.text}</li></div>`;
@@ -65,18 +88,37 @@ export class ListContent extends VNoteContent {
     return html;
   }
   fromJSON(data: any): VNoteContent {
-    return new ListContent(data.list);
+    return new ListContent(data.list, data.id);
   }
   toJSON(): string {
     return JSON.stringify(this);
   }
+  toObject(): any {
+    return this.list.map(item => {
+        return item.toObject();
+      })
+    }
+
+  parseID(map:  Map<number, VNoteContent>) {
+    if (map.has(this.id)) {
+      throw new Error("Duplicate id in list");
+    }
+    map.set(this.id, this);
+    for (let i = 0; i < this.list.length; i++) {
+      const element = this.list[i];
+      element.parseID(map);
+    }
+  }
+  
 }
 
 export class TodoListContent extends VNoteContent {
   list: TodoItem[];
-  constructor(list: TodoItem[]) {
+  id: number;
+  constructor(list: TodoItem[], id: number) {
     super();
     this.list = list;
+    this.id = id;
   }
 
   toHTML(): string {
@@ -94,12 +136,33 @@ export class TodoListContent extends VNoteContent {
   }
 
   fromJSON(data: any): VNoteContent {
-    return new TodoListContent(data.list);
+    return new TodoListContent(data.list, data.id);
   }
 
   toJSON(): string {
-    return JSON.stringify(this);
+    let list = this.list.map(item => {
+      return item.toJSON();
+    });
+    return JSON.stringify({ list: list, type: "todoList", id: this.id });
   }
+
+  toObject(): any {
+    return this.list.map(item => {
+        return item.toObject();
+      })
+    };
+
+  parseID(map:  Map<number, VNoteContent>) {
+    if (map.has(this.id)) {
+      throw new Error("Duplicate id in todo list");
+    }
+    map.set(this.id, this);
+    for (let i = 0; i < this.list.length; i++) {
+      const element = this.list[i];
+      element.parseID(map);
+    }
+  }
+  
 }
 
 export class TodoItem extends VNoteContent {
@@ -122,42 +185,109 @@ export class TodoItem extends VNoteContent {
   }
 
   toJSON(): string {
-    return JSON.stringify(this);
+    return JSON.stringify({ content: this.content, id: this.id, type: "todo", done: this.done });
+  }
+
+  toObject(): any {
+    return {
+      content: this.content,
+      done: this.done,
+      id: this.id,
+      type: "todo"
+    };
+  }
+
+  parseID(map:  Map<number, VNoteContent>) {
+    if (map.has(this.id)) {
+      throw new Error("Duplicate id in todo item");
+    }
+    map.set(this.id, this);
   }
 }
 
 export class Heading1Content extends VNoteContent {
   content: string;
-  constructor(content: string) {
+  id: number;
+  constructor(content: string, id: number) {
     super();
     this.content = content;
+    this.id = id;
   }
 
   toHTML(): string {
-    return `<div class="container"> <div class="add_button">+</div><h1>${this.content}</h1></div>`;
+    return `<div class="container"> <button class="add_button" onclick="addElement()">+</button><h1 id=${this.id}>${this.content}</h1></div>`;
+  }
+
+  toObject(): any {
+    return {
+      content: this.content,
+      type: "h1",
+      id: this.id
+    }
+  }
+
+  parseID(map:  Map<number, VNoteContent>) {
+    if (map.has(this.id)) {
+      throw new Error("Duplicate id in heading 1");
+    }
+    map.set(this.id, this);
   }
 }
 
 export class Heading2Content extends VNoteContent {
   content: string;
-  constructor(content: string) {
+  id: number;
+  constructor(content: string, id: number) {
     super();
     this.content = content;
+    this.id = id;
   }
 
   toHTML(): string {
-    return `<div class="container"> <div class="add_button">+</div><h2>${this.content}</h2></div>`;
+    return `<div class="container"> <div class="add_button">+</div><h2 id=${this.id}>${this.content}</h2></div>`;
+  }
+
+  toObject(): any {
+    return {
+      content: this.content,
+      type: "h2",
+      id: this.id
+    }
+  }
+
+  parseID(map:  Map<number, VNoteContent>) {
+    if (map.has(this.id)) {
+      throw new Error("Duplicate id in heading 2");
+    }
+    map.set(this.id, this);
   }
 }
 
 export class Heading3Content extends VNoteContent {
   content: string;
-  constructor(content: string) {
+  id: number;
+  constructor(content: string, id: number) {
     super();
     this.content = content;
+    this.id = id;
   }
 
   toHTML(): string {
-    return `<div class="container"> <div class="add_button">+</div><h3>${this.content}</h3></div>`;
+    return `<div class="container"> <div class="add_button">+</div><h3 id = "${this.id}">${this.content}</h3></div>`;
+  }
+
+  toObject(): any {
+    return {
+      content: this.content,
+      type: "h3",
+      id: this.id
+    }
+  }
+
+  parseID(map:  Map<number, VNoteContent>) {
+    if (map.has(this.id)) {
+      throw new Error("Duplicate id in heading 3");
+    }
+    map.set(this.id, this);
   }
 }

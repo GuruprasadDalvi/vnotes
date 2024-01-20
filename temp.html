@@ -57,47 +57,266 @@
       h4 {
         margin: 0;
       }
+      .h1{
+        font-size: 2em;
+        font-weight: bold;
+        outline: none;
+        border: none;
+      }
+
+      .h2{
+        font-size: 1.5em;
+        font-weight: bold;
+        outline: none;
+        border: none;
+      }
+      .tooltipList{
+        position: absolute;
+        width: 80px;
+        top: 0;
+        left: 0;
+        list-style: none;
+        box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        z-index: 100;
+        display: none;
+      }
+      .tooltipList li{
+        border-bottom: 1px solid #bbbbbb;
+      }
+      .tooltipList li button{
+        outline: none;
+        border: none;
+        padding: 5px;
+        width: 100%;
+        text-align: left;
+        cursor: pointer;
+        
+      }
+      .tooltipList li button:last-child{
+        border-bottom: none;
+      }
+      .tooltipList li button:hover{
+        font-weight: bold;
+      }
     </style>
   </head>
   <body>
+    <div class="tooltipList" id ="tooltipList">
+
+    </div>
     <h1>test0</h1>
     Created on: 1/13/2024, 8:00:05 PM<br />
-    Last updated on: 1/14/2024, 12:03:09 PM<br />
+    Last updated on: 1/18/2024, 11:02:58 AM<br />
     <hr />
     <div class="container">
-      <div class="add_button">+</div>
-      <h2>h1 content</h2>
+      <button class="add_button" onclick="addElement()" >+</button>
+      <input id="1" class="h1 editor" value="h1 style" ></input>
     </div>
-    <h3>h2 Design</h3>
-    <h4>h3 Design</h4>
-    <ul>
-      <li>Note Design</li>
-      <li>Note Design</li>
-      <li>Note Design</li>
-      <li>Note Design</li>
-      <li>Note Design</li>
+    <div class="container">
+      <div class="add_button">+</div>
+      <input id="2" class="h2 editor" value="h2 style"></input>
+    </div>
+    <div class="container">
+      <div class="add_button">+</div>
+      <h3 id="3">h3 Design</h3>
+    </div>
+    <ul id="9">
+      <div class="container">
+        <div class="add_button">+</div>
+        <li>normal text 1</li>
+      </div>
+      <div class="container">
+        <div class="add_button">+</div>
+        <li>normal text 2</li>
+      </div>
+      <div class="container">
+        <div class="add_button">+</div>
+        <li>normal text 3</li>
+      </div>
+      <div class="container">
+        <div class="add_button">+</div>
+        <li>normal text 4</li>
+      </div>
+      <div class="container">
+        <div class="add_button">+</div>
+        <li>normal text 5</li>
+      </div>
     </ul>
     <ul class="todoList">
-      <li class="checked"><input type="checkbox" checked />Note Design</li>
-      <li><input type="checkbox" />Note Design</li>
-      <li><input type="checkbox" />Note Design</li>
-      <li><input type="checkbox" />Note Design</li>
-      <li><input type="checkbox" />Note Design</li>
+      <div class="container">
+        <div class="add_button">+</div>
+        <li class="checked"><input type="checkbox" checked />Note Design</li>
+      </div>
+      <div class="container">
+        <div class="add_button">+</div>
+        <li><input type="checkbox" />Note Design</li>
+      </div>
+      <div class="container">
+        <div class="add_button">+</div>
+        <li><input type="checkbox" />Note Design</li>
+      </div>
+      <div class="container">
+        <div class="add_button">+</div>
+        <li><input type="checkbox" />Note Design</li>
+      </div>
+      <div class="container">
+        <div class="add_button">+</div>
+        <li><input type="checkbox" />Note Design</li>
+      </div>
     </ul>
-    <input
-      id="11"
-      class="text"
-      placeholder="type '/' to enter command mode"
-      value="normal text"
-    />
-    <br />
+    <div class="container">
+      <div class="add_button">+</div>
+      <input
+        id="16"
+        class="text editor"
+        placeholder="type '/' to enter command mode"
+        value="normal text"
+      />
+      <br />
+    </div>
     <input
       type="text"
       id="newItem"
       placeholder="type '/' to enter command mode"
-      class="text"
-      onchange="{}"
+      class="text editor"
+      name="editor"
     />
     <br />
   </body>
+
+  <script>
+    const vscode = acquireVsCodeApi();
+    let commandMode = false;
+    const textInput = document.getElementById("newItem");
+    textInput.addEventListener("keydown", function (event) {
+      if (event.key === "/") {
+        console.log("command mode");
+        commandMode = true;
+      }
+    });
+
+    const addElement = () => {
+      let element = {
+        type: "text",
+        content: "adding test",
+        id: 100,
+      };
+      console.log("Adding element in template");
+      console.log(element);
+      vscode.postMessage({
+        command: "addElement",
+        element: element,
+      });
+    };
+
+      let commandMode = false;
+      function populateListAction(elementName) {
+    elementName = elementName.replace("/", "");
+    const actionElements = {
+      h1: {
+        type: "h1",
+        content: "heading 1",
+        id: 1,
+      },
+      h2: {
+        type: "h2",
+        content: "heading 2",
+        id: 2,
+      },
+      h3: {
+        type: "h3",
+        content: "heading 3",
+        id: 3,
+      },
+      todoList: {
+        type: "todoList",
+        content: [],
+        id: 9,
+      },
+      text: {
+        type: "text",
+        content: "normal text",
+        id: 16,
+      },
+      "bullet List": {
+        type: "bl",
+        content: [],
+        id: 17,
+      },
+    };
+
+    document.getElementById("tooltipList").innerHTML = "";
+    const tooltipList = document.getElementById("tooltipList");
+    console.log("elementName");
+    console.log(elementName);
+    for (const [key, value] of Object.entries(actionElements)) {
+      if (key.includes(elementName)) {
+        let li = document.createElement("li");
+        let button = document.createElement("button");
+        button.innerHTML = key;
+        button.addEventListener("click", function () {
+          vscode.postMessage({
+            command: "addElement",
+            element: value,
+          });
+        });
+        li.appendChild(button);
+        tooltipList.appendChild(li);
+      }
+    }
+  }
+
+  document.getElementsByName("editor").forEach((e) => {
+    e.addEventListener("keydown", function (event) {
+      if (commandMode) {
+        populateListAction(event.target.value + event.key);
+      }
+      if (event.key === "/") {
+        // Show command menu
+        let tootTip = document.getElementById("tooltipList");
+        tootTip.style.display = "block";
+        const caretPosition = getCaretCoordinates();
+
+        tootTip.style.top = caretPosition.y + 30 + "px";
+        tootTip.style.left = caretPosition.x + "px";
+        commandMode = true;
+
+        populateListAction(event.target.value);
+      }
+      if (event.key === "Escape") {
+        // Hide command menu
+        document.getElementById("tooltipList").style.display = "none";
+        document.getElementById("tooltipList").innerHTML = "";
+        commandMode = false;
+      }
+      if (event.key === " ") {
+        // Hide command menu
+        document.getElementById("tooltipList").style.display = "none";
+        document.getElementById("tooltipList").innerHTML = "";
+        commandMode = false;
+      }
+      if (event.key === "Backspace") {
+        // Hide command menu
+        document.getElementById("tooltipList").style.display = "none";
+        document.getElementById("tooltipList").innerHTML = "";
+        commandMode = false;
+      }
+    });
+  });
+
+  function getCaretCoordinates() {
+    let x = 0,
+      y = 0;
+    let focused = document.activeElement;
+    if (!focused) {
+      return { x, y };
+    }
+    const rect = focused.getBoundingClientRect();
+    x = rect.left + focused.selectionStart;
+    y = rect.top + focused.selectionEnd;
+
+    return { x, y };
+  }
+
+  </script>
 </html>
