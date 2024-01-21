@@ -25,4 +25,8 @@ export class VNoteElement {
     parseID(map:  Map<number, VNoteContent>) {
         this.content.parseID(map);
     }
+
+    setContent(content: VNoteContent) {
+        this.content = content;
+    }
 }

@@ -95,7 +95,11 @@ export class ListContent extends VNoteContent {
   }
   toObject(): any {
     return this.list.map(item => {
-        return item.toObject();
+        return {
+          content: item.text,
+          id: item.id,
+          type: "text"
+        };
       })
     }
 
@@ -219,11 +223,7 @@ export class Heading1Content extends VNoteContent {
   }
 
   toObject(): any {
-    return {
-      content: this.content,
-      type: "h1",
-      id: this.id
-    }
+    return this.content
   }
 
   parseID(map:  Map<number, VNoteContent>) {
@@ -248,11 +248,7 @@ export class Heading2Content extends VNoteContent {
   }
 
   toObject(): any {
-    return {
-      content: this.content,
-      type: "h2",
-      id: this.id
-    }
+    return this.content
   }
 
   parseID(map:  Map<number, VNoteContent>) {
@@ -277,11 +273,7 @@ export class Heading3Content extends VNoteContent {
   }
 
   toObject(): any {
-    return {
-      content: this.content,
-      type: "h3",
-      id: this.id
-    }
+    return this.content
   }
 
   parseID(map:  Map<number, VNoteContent>) {

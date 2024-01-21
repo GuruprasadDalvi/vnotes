@@ -6,7 +6,7 @@ import * as vscode from "vscode";
 import { VNote } from "./models/VNote";
 import { VNotesProvider } from "./providers/VNotesProvider";
 import { VNoteManager } from "./manager/VNoteManager";
-import { TextContent, VNoteContent } from "./models/VNoteContaint";
+import { TextContent, TodoItem, VNoteContent } from "./models/VNoteContaint";
 import { VNoteElement } from "./models/VNoteElement";
 
 // This method is called when your extension is activated
@@ -23,6 +23,18 @@ export function activate(context: vscode.ExtensionContext) {
   vscode.commands.registerCommand("vnotes.addElement", async (element) => {
     console.log("Adding element in command");
     element.id = openedVNote.data.getNextId();
+    openedVNote.data.idMap.set(element.id, element.content);
+
+    //Handling the case of a bullate list
+    if (element.type =="bl") {
+      element.content[0].id = openedVNote.data.getNextId();
+      openedVNote.data.idMap.set(element.content[0].id, element.content[0]);
+    }
+    //Handling the case of a todo list
+    else if (element.type =="todoList") {
+      element.content[0].id = openedVNote.data.getNextId();
+      openedVNote.data.idMap.set(element.content[0].id, element.content[0]);
+    }
     console.log(element);
     vnoteManager.addElement(openedVNote, element);
   });

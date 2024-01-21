@@ -200,7 +200,14 @@ export class VNoteManager {
           },
           todoList: {
             type: "todoList",
-            content: [],
+            content: [
+              {
+                type: "todoItem",
+                content: "add todo",
+                done: false,
+                id: 4,
+              }
+            ],
             id: 9,
           },
           text: {
@@ -210,7 +217,13 @@ export class VNoteManager {
           },
           "bullet List": {
             type: "bl",
-            content: [],
+            content: [
+              {
+                type: "text",
+                content: "bullet 1",
+                id: 10,
+              }
+            ],
             id: 17,
           },
         };
