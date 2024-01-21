@@ -20,25 +20,6 @@ export function activate(context: vscode.ExtensionContext) {
     vnotesProvider.refresh()
   );
 
-  vscode.commands.registerCommand("vnotes.addElement", async (element) => {
-    console.log("Adding element in command");
-    element.id = openedVNote.data.getNextId();
-    openedVNote.data.idMap.set(element.id, element.content);
-
-    //Handling the case of a bullate list
-    if (element.type =="bl") {
-      element.content[0].id = openedVNote.data.getNextId();
-      openedVNote.data.idMap.set(element.content[0].id, element.content[0]);
-    }
-    //Handling the case of a todo list
-    else if (element.type =="todoList") {
-      element.content[0].id = openedVNote.data.getNextId();
-      openedVNote.data.idMap.set(element.content[0].id, element.content[0]);
-    }
-    console.log(element);
-    vnoteManager.addElement(openedVNote, element);
-  });
-
   const disposable = vscode.commands.registerCommand(
     "vnotes.helloWorld",
     () => {
@@ -87,7 +68,29 @@ export function activate(context: vscode.ExtensionContext) {
         case "addElement":
           console.log("Adding element in message");
           message.element.id = openedVNote.data.getNextId();
+          openedVNote.data.idMap.set(
+            message.element.id,
+            message.element.content
+          );
           console.log(message.element);
+
+          //Handling the case of a bullate list
+          if (message.element.type == "bl") {
+            message.element.content[0].id = openedVNote.data.getNextId();
+            openedVNote.data.idMap.set(
+              message.element.content[0].id,
+              message.element.content[0]
+            );
+          }
+          //Handling the case of a todo list
+          else if (message.element.type == "todoList") {
+            message.element.content[0].id = openedVNote.data.getNextId();
+            openedVNote.data.idMap.set(
+              message.element.content[0].id,
+              message.element.content[0]
+            );
+          }
+          
           let vnoteElement = VNoteElement.fromJSON(message.element);
           console.log("vnoteElement");
           console.log(vnoteElement);
