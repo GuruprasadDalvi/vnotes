@@ -61,7 +61,7 @@ export class VNoteManager {
           min-width: 0;
           background-color: transparent;
           border: 0;
-          padding: 10px;
+          padding: 5px;
           margin: 0;
           outline: none;
           resize: none;
@@ -106,6 +106,13 @@ export class VNoteManager {
   
         .h2 {
           font-size: 1.5em;
+          font-weight: bold;
+          outline: none;
+          border: none;
+        }
+  
+        .h3 {
+          font-size: 1em;
           font-weight: bold;
           outline: none;
           border: none;
