@@ -166,6 +166,52 @@ export class VNoteManager {
     <script>
       const vscode = acquireVsCodeApi();
       let commandMode = false;
+      
+      const actionElements = {
+        h1: {
+          type: "h1",
+          content: "",
+          id: 1,
+        },
+        h2: {
+          type: "h2",
+          content: "",
+          id: 2,
+        },
+        h3: {
+          type: "h3",
+          content: "",
+          id: 3,
+        },
+        todoList: {
+          type: "todoList",
+          content: [
+            {
+              type: "todoItem",
+              content: "",
+              done: false,
+              id: 4,
+            }
+          ],
+          id: 9,
+        },
+        text: {
+          type: "text",
+          content: "",
+          id: 16,
+        },
+        "bullet List": {
+          type: "bl",
+          content: [
+            {
+              type: "text",
+              content: "",
+              id: 10,
+            }
+          ],
+          id: 17,
+        },
+      };
       const textInput = document.getElementById("newItem");
       textInput.addEventListener("keydown", function (event) {
         if (event.key === "/") {
@@ -189,51 +235,6 @@ export class VNoteManager {
       };
       function populateListAction(elementName) {
         elementName = elementName.replace("/", "");
-        const actionElements = {
-          h1: {
-            type: "h1",
-            content: "heading 1",
-            id: 1,
-          },
-          h2: {
-            type: "h2",
-            content: "heading 2",
-            id: 2,
-          },
-          h3: {
-            type: "h3",
-            content: "heading 3",
-            id: 3,
-          },
-          todoList: {
-            type: "todoList",
-            content: [
-              {
-                type: "todoItem",
-                content: "add todo",
-                done: false,
-                id: 4,
-              }
-            ],
-            id: 9,
-          },
-          text: {
-            type: "text",
-            content: "normal text",
-            id: 16,
-          },
-          "bullet List": {
-            type: "bl",
-            content: [
-              {
-                type: "text",
-                content: "bullet 1",
-                id: 10,
-              }
-            ],
-            id: 17,
-          },
-        };
   
         document.getElementById("tooltipList").innerHTML = "";
         const tooltipList = document.getElementById("tooltipList");
@@ -255,7 +256,20 @@ export class VNoteManager {
           }
         }
       }
-  
+
+      //Shift focus to newly added element
+      window.addEventListener("message", (event) => {
+        const message = event.data;
+        switch (message.command) {
+          case "updateFocus":
+            console.log("focus");
+            console.log(message.id);
+            document.getElementById(message.id).focus();
+            break;
+        }
+      }
+      );
+      
       document.getElementsByName("editor").forEach((e) => {
         e.addEventListener("keydown", function (event) {
           if (commandMode) {
@@ -285,11 +299,45 @@ export class VNoteManager {
             document.getElementById("tooltipList").innerHTML = "";
             commandMode = false;
           }
-          if (event.key === "Backspace") {
-            // Hide command menu
-            document.getElementById("tooltipList").style.display = "none";
-            document.getElementById("tooltipList").innerHTML = "";
-            commandMode = false;
+          if (event.key === "Enter") {
+            //Check if in command Mode
+            if (commandMode) {
+              //get the first element in command menu
+              const firstElement = document.getElementById("tooltipList")
+              console.log("firstElement");
+              console.log(firstElement);
+              //add new element
+              key = firstElement.innerHTML;
+              console.log("key for new element");
+              console.log(key);
+              let element = actionElements[key];
+              console.log("Adding element in template");
+              console.log(element);
+              vscode.postMessage({
+                command: "addElement",
+                element: element,
+              });
+
+
+              // Hide command menu
+              document.getElementById("tooltipList").style.display = "none";
+              document.getElementById("tooltipList").innerHTML = "";
+              commandMode = false;
+            }
+            else {
+              // Add new item
+              let element = {
+                type: "text",
+                content: event.target.value,
+                id: 100,
+              };
+              console.log("Adding element in template");
+              console.log(element);
+              vscode.postMessage({
+                command: "addElement",
+                element: element,
+              });
+            }
           }
         });
       });

@@ -49,7 +49,7 @@ export class TextContent extends VNoteContent {
   }
 
   toHTML(): string {
-    return `<div class="container"> <div class="add_button">+</div><INPUT id="${this.id}" class="text"  placeholder="type '/' to enter command mode" name="editor" value='${this.text}' /> <br/></div>`;
+    return `<div class="container"> <div class="add_button">+</div><INPUT id="${this.id}" class="text" tabindex="${this.id}"  placeholder="type '/' to enter command mode" name="editor" value='${this.text}' /> <br/></div>`;
   }
   fromJSON(data: any): VNoteContent {
     return new TextContent(data.text, data.id);
@@ -82,7 +82,7 @@ export class ListContent extends VNoteContent {
     let html = `<ul id = "${this.id}">`;
     for (let i = 0; i < this.list.length; i++) {
       const element = this.list[i];
-      html += `<div class="container"> <div class="add_button">+</div><li><INPUT id="${element.id}" class="text"  placeholder="type '/' to enter command mode" name="editor" value='${element.text}' /></li> <br/></div>`;
+      html += `<div class="container"> <div class="add_button">+</div><li><INPUT id="${element.id}" class="text" tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.text}' /></li> <br/></div>`;
     }
     html += "</ul>";
     return html;
@@ -130,9 +130,9 @@ export class TodoListContent extends VNoteContent {
     for (let i = 0; i < this.list.length; i++) {
       const element = this.list[i];
       if (element.done) {
-        html += `<div class="container"> <div class="add_button">+</div><li class="checked"><input type="checkbox" checked  ><INPUT id="${element.id}" class="text"  placeholder="type '/' to enter command mode" name="editor" value='${element.content}' /></li></div>`;
+        html += `<div class="container"> <div class="add_button">+</div><li class="checked"><input type="checkbox" checked  ><INPUT id="${element.id}" class="text" tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.content}' /></li></div>`;
       } else {
-        html += `<div class="container"> <div class="add_button">+</div><li><input type="checkbox"><INPUT id="${element.id}" class="text"  placeholder="type '/' to enter command mode" name="editor" value='${element.content}' /></li></div>`;
+        html += `<div class="container"> <div class="add_button">+</div><li><input type="checkbox"><INPUT id="${element.id}" class="text"  tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.content}' /></li></div>`;
       }
     }
     html += "</ul>";
@@ -219,7 +219,7 @@ export class Heading1Content extends VNoteContent {
   }
 
   toHTML(): string {
-    return `<div class="container"> <button class="add_button" onclick="addElement()">+</button><h1><INPUT id="${this.id}" class="text h1"  placeholder="type '/' to enter command mode" name="editor" value='${this.content}' /></h1></div>`;
+    return `<div class="container"> <button class="add_button" onclick="addElement()">+</button><h1><INPUT id="${this.id}" class="text h1" tabindex="${this.id}"  placeholder="Heading 1" name="editor" value='${this.content}' /></h1></div>`;
   }
 
   toObject(): any {
@@ -244,7 +244,7 @@ export class Heading2Content extends VNoteContent {
   }
 
   toHTML(): string {
-    return `<div class="container"> <button class="add_button" onclick="addElement()">+</button><h2><INPUT id="${this.id}" class="text h2"  placeholder="type '/' to enter command mode" name="editor" value='${this.content}' /></h2></div>`;
+    return `<div class="container"> <button class="add_button" onclick="addElement()">+</button><h2><INPUT id="${this.id}" class="text h2"  tabindex="${this.id}"  placeholder="Heading 2" name="editor" value='${this.content}' /></h2></div>`;
   }
 
   toObject(): any {
@@ -269,7 +269,7 @@ export class Heading3Content extends VNoteContent {
   }
 
   toHTML(): string {
-    return `<div class="container"> <button class="add_button" onclick="addElement()">+</button><h3><INPUT id="${this.id}" class="text h3"  placeholder="type '/' to enter command mode" name="editor" value='${this.content}' /></h3></div>`;
+    return `<div class="container"> <button class="add_button" onclick="addElement()">+</button><h3><INPUT id="${this.id}" class="text h3"  tabindex="${this.id}"  placeholder="Heading 3" name="editor" value='${this.content}' /></h3></div>`;
   }
 
   toObject(): any {

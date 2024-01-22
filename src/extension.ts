@@ -90,12 +90,31 @@ export function activate(context: vscode.ExtensionContext) {
               message.element.content[0]
             );
           }
-          
+
           let vnoteElement = VNoteElement.fromJSON(message.element);
           console.log("vnoteElement");
           console.log(vnoteElement);
           vnoteManager.addElement(openedVNote, vnoteElement);
           panel.webview.html = vnoteManager.getHTMLContent(vnote);
+          if (message.element.type == "bl") {
+            panel.webview.postMessage({
+              command: "updateFocus",
+              id: message.element.content[0].id,
+            });
+            
+          }
+          else if (message.element.type == "todoList") {
+            panel.webview.postMessage({
+              command: "updateFocus",
+              id: message.element.content[0].id,
+            });
+          }
+          else {
+            panel.webview.postMessage({
+              command: "updateFocus",
+              id: message.element.id,
+            });
+          }
           break;
       }
     });
@@ -110,6 +129,3 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(disposable);
 }
-
-// This method is called when your extension is deactivated
-export function deactivate() {}
