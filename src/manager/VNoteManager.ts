@@ -57,7 +57,7 @@ export class VNoteManager {
           text-decoration-color: red;
         }
         .text {
-          width: 100ch;
+          width: fit-content;
           min-width: 0;
           background-color: transparent;
           border: 0;
@@ -243,6 +243,7 @@ export class VNoteManager {
         for (const [key, value] of Object.entries(actionElements)) {
           if (key.includes(elementName)) {
             let li = document.createElement("li");
+            li.setAttribute("id", key);
             let button = document.createElement("button");
             button.innerHTML = key;
             button.addEventListener("click", function () {
@@ -275,6 +276,7 @@ export class VNoteManager {
           if (commandMode) {
             populateListAction(event.target.value + event.key);
           }
+          console.log("Pressed key: " + event.key)
           if (event.key === "/") {
             // Show command menu
             let tootTip = document.getElementById("tooltipList");
@@ -302,15 +304,17 @@ export class VNoteManager {
           if (event.key === "Enter") {
             //Check if in command Mode
             if (commandMode) {
+              populateListAction(event.target.value);
               //get the first element in command menu
               const firstElement = document.getElementById("tooltipList")
               console.log("firstElement");
               console.log(firstElement);
+
               //add new element
-              key = firstElement.innerHTML;
+              let actionKey = firstElement.firstElementChild.id;
               console.log("key for new element");
-              console.log(key);
-              let element = actionElements[key];
+              console.log(actionKey);
+              let element = actionElements[actionKey];
               console.log("Adding element in template");
               console.log(element);
               vscode.postMessage({
