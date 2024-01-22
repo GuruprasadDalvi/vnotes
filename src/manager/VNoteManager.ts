@@ -9,6 +9,12 @@ export class VNoteManager {
   openNote() {}
   deleteNote() {}
   updateNote() {}
+  updateElement(vnote: VNote, id: number, content: string) {
+    console.log("Updating content in manager");
+    let element = vnote.data.getElementById(+id);
+    element.content = content;
+    vnote.save();
+  }
   saveVNote(vnote: VNote) {}
   addElement(vnote: VNote, element: VNoteElement) {
     console.log("Adding element in manager");
@@ -215,7 +221,6 @@ export class VNoteManager {
       const textInput = document.getElementById("newItem");
       textInput.addEventListener("keydown", function (event) {
         if (event.key === "/") {
-          console.log("command mode");
           commandMode = true;
         }
       });
@@ -226,8 +231,6 @@ export class VNoteManager {
           content: "adding test",
           id: 100,
         };
-        console.log("Adding element in template");
-        console.log(element);
         vscode.postMessage({
           command: "addElement",
           element: element,
@@ -238,8 +241,6 @@ export class VNoteManager {
   
         document.getElementById("tooltipList").innerHTML = "";
         const tooltipList = document.getElementById("tooltipList");
-        console.log("elementName");
-        console.log(elementName);
         for (const [key, value] of Object.entries(actionElements)) {
           if (key.includes(elementName)) {
             let li = document.createElement("li");
@@ -263,8 +264,6 @@ export class VNoteManager {
         const message = event.data;
         switch (message.command) {
           case "updateFocus":
-            console.log("focus");
-            console.log(message.id);
             document.getElementById(message.id).focus();
             break;
         }
@@ -276,7 +275,6 @@ export class VNoteManager {
           if (commandMode) {
             populateListAction(event.target.value + event.key);
           }
-          console.log("Pressed key: " + event.key)
           if (event.key === "/") {
             // Show command menu
             let tootTip = document.getElementById("tooltipList");
@@ -307,16 +305,10 @@ export class VNoteManager {
               populateListAction(event.target.value);
               //get the first element in command menu
               const firstElement = document.getElementById("tooltipList")
-              console.log("firstElement");
-              console.log(firstElement);
 
               //add new element
               let actionKey = firstElement.firstElementChild.id;
-              console.log("key for new element");
-              console.log(actionKey);
               let element = actionElements[actionKey];
-              console.log("Adding element in template");
-              console.log(element);
               vscode.postMessage({
                 command: "addElement",
                 element: element,
@@ -335,8 +327,6 @@ export class VNoteManager {
                 content: event.target.value,
                 id: 100,
               };
-              console.log("Adding element in template");
-              console.log(element);
               vscode.postMessage({
                 command: "addElement",
                 element: element,
@@ -344,6 +334,22 @@ export class VNoteManager {
             }
           }
         });
+
+
+         e.onchange = (event) =>{
+          console.log("onchange"); 
+          let id = event.target.id;
+          let content = event.target.value;
+          console.log("id: "+ id);
+          console.log("content: "+ content);
+
+          // Update the content
+          vscode.postMessage({
+            command: "updateContent",
+            id: id,
+            content: content,
+          });
+        }
       });
   
       function getCaretCoordinates() {
@@ -359,6 +365,7 @@ export class VNoteManager {
   
         return { x, y };
       }
+
     </script>
   </html>
   

@@ -64,6 +64,9 @@ export function activate(context: vscode.ExtensionContext) {
       }
     );
     panel.webview.onDidReceiveMessage((message) => {
+      console.log("Received message");
+      console.log(message);
+
       switch (message.command) {
         case "addElement":
           console.log("Adding element in message");
@@ -116,13 +119,18 @@ export function activate(context: vscode.ExtensionContext) {
             });
           }
           break;
+        case "updateContent":
+          console.log("Updating element in message");
+          const id  = message.id;
+          const content = message.content;
+          vnoteManager.updateElement(openedVNote, id, content);
+          panel.webview.html = vnoteManager.getHTMLContent(vnote);
+          break;
       }
     });
 
     vnote.loadData();
     const content = vnoteManager.getHTMLContent(vnote);
-    console.log("HTML content");
-    console.log(content);
     panel.webview.html = content;
     openedVNote = vnote;
   });

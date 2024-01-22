@@ -73,4 +73,8 @@ export class VNoteData {
         console.log(idMap);
         return idMap;
     }
+
+    getElementById(id: number): VNoteContent {
+        return this.idMap.get(id);
+    }
 }
