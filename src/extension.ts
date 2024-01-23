@@ -126,7 +126,14 @@ export function activate(context: vscode.ExtensionContext) {
           vnoteManager.updateElement(openedVNote, id, content);
           panel.webview.html = vnoteManager.getHTMLContent(vnote);
           break;
+        case "toggleTodoItem":
+          console.log("Toggling todo item");
+          const todoId = message.id;
+          vnoteManager.toggleTodoItem(openedVNote, todoId);
+          panel.webview.html = vnoteManager.getHTMLContent(vnote);
+          break;
       }
+
     });
 
     vnote.loadData();

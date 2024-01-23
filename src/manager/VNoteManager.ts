@@ -22,6 +22,12 @@ export class VNoteManager {
     vnote.save();
 
   }
+  toggleTodoItem(vnote: VNote, id: number) {
+    console.log("Toggling todo item");
+    let element = vnote.data.getElementById(+id);
+    element.done = !element.done;
+    vnote.save();
+  }
 
   /**
    * This function will parse the content of the note and return the HTML content
@@ -61,6 +67,8 @@ export class VNoteManager {
         .checked {
           text-decoration: line-through;
           text-decoration-color: red;
+          brightness: 0.5;
+          color: rgba(155,155,155,0.5);
         }
         .text {
           width: fit-content;
@@ -350,6 +358,18 @@ export class VNoteManager {
             content: content,
           });
         }
+      });
+
+
+      document.getElementsByName("todo_box").forEach((e) => {
+        e.onchange = (event) => {
+          let id = event.target.id.replace("_box", "");
+          vscode.postMessage({
+            command: "toggleTodoItem",
+            id: id,
+          });
+        }
+
       });
   
       function getCaretCoordinates() {

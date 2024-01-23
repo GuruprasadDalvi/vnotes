@@ -130,9 +130,9 @@ export class TodoListContent extends VNoteContent {
     for (let i = 0; i < this.list.length; i++) {
       const element = this.list[i];
       if (element.done) {
-        html += `<div class="container"> <div class="add_button">+</div><li class="checked"><input type="checkbox" checked  ><INPUT id="${element.id}" class="text" tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.content}' /></li></div>`;
+        html += `<div class="container"> <div class="add_button">+</div><li class="checked"><input type="checkbox" id="${element.id}_box" name="todo_box"  checked  ><INPUT id="${element.id}" class="text checked" tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.content}' /></li></div>`;
       } else {
-        html += `<div class="container"> <div class="add_button">+</div><li><input type="checkbox"><INPUT id="${element.id}" class="text"  tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.content}' /></li></div>`;
+        html += `<div class="container"> <div class="add_button">+</div><li><input type="checkbox" id="${element.id}_box" name="todo_box" ><INPUT id="${element.id}" class="text"  tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.content}' /></li></div>`;
       }
     }
     html += "</ul>";
