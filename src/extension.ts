@@ -132,6 +132,24 @@ export function activate(context: vscode.ExtensionContext) {
           vnoteManager.toggleTodoItem(openedVNote, todoId);
           panel.webview.html = vnoteManager.getHTMLContent(vnote);
           break;
+        case "deleteElement":
+          console.log("Deleting element");
+          const elementId = message.id;
+          const focusID = vnoteManager.deleteElement(openedVNote, elementId);
+          panel.webview.html = vnoteManager.getHTMLContent(vnote);
+          if (focusID != -1) {
+            panel.webview.postMessage({
+              command: "updateFocus",
+              id: focusID,
+            });
+          }
+          else{
+            panel.webview.postMessage({
+              command: "updateFocus",
+              id: "newItem",
+            });
+          }
+          break;
       }
 
     });

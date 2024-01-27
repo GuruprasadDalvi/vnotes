@@ -4,6 +4,7 @@ import { VNoteElement } from "./VNoteElement";
 export class VNoteData {
     elements: VNoteElement[];
     idMap!: Map<number, VNoteContent>;
+    maxId: number = -1;
     constructor(elements: VNoteElement[]) {
         this.elements = elements;
     }
@@ -57,9 +58,66 @@ export class VNoteData {
     
 
     getNextId(): number {
-        return this.idMap.size + 1;
+        this.maxId++;
+        return this.maxId;
     }
 
+    /**
+     * 
+     * @param id id of the element to update
+     * @returns id of element to focus
+     */
+    deleteElement(id: number) {
+        let newFocusId = -1;
+        let index = this.elements.findIndex(element => {
+
+            //Deleting item from todo list
+            if (element.type == "todoList") {
+                let l = element.content.list.length;
+                console.log("length" + l);
+                if(l==1){
+                        return true;
+                }
+                for (let i = 0; i < element.content.list.length; i++) {
+                    const item = element.content.list[i];
+                    if (item.id == id) {
+                        console.log("Deleting item from todo list, id: " + id );
+                        element.content.list.splice(i, 1);
+                        newFocusId = element.content.list[i-1].id;
+                        return false;
+                    }
+                }
+            }
+            else if (element.type == "bl") {
+                let l = element.content.list.length;
+                console.log("length" + l);
+                if(l==1){
+                        return true;
+                }
+                for (let i = 0; i < element.content.list.length; i++) {
+                    const item = element.content.list[i];
+                    if (item.id == id) {
+                        console.log("Deleting item from bl, id: " + id );
+                        element.content.list.splice(i, 1);
+                        newFocusId = element.content.list[i-1].id;
+                        return false;
+                    }
+                }
+            }
+            else{
+                console.log("Deleting item, id: " + id );
+                if (element.id == id) {
+                    return true;
+                }
+            }
+            
+        });
+        if (index != -1) {
+            this.elements.splice(index, 1);
+            this.idMap.delete(id);
+        }
+        return newFocusId;
+    }
 
 
     createIDMap(): Map<number, VNoteContent> {
@@ -71,6 +129,10 @@ export class VNoteData {
         this.idMap = idMap;
         console.log("idMap");
         console.log(idMap);
+        //Getting max key
+        if (idMap.size > 0) {
+            this.maxId = Math.max(...idMap.keys());
+        }
         return idMap;
     }
 

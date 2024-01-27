@@ -8,7 +8,12 @@ export class VNoteManager {
   createNewNote() {}
   openNote() {}
   deleteNote() {}
-  updateNote() {}
+  deleteElement(vnote: VNote, id: number) {
+    console.log("Deleting element in manager");
+    const focusID =  vnote.data.deleteElement(+id);
+    vnote.save();
+    return focusID;
+  }
   updateElement(vnote: VNote, id: number, content: string) {
     console.log("Updating content in manager");
     let element = vnote.data.getElementById(+id);
@@ -307,6 +312,18 @@ export class VNoteManager {
             document.getElementById("tooltipList").innerHTML = "";
             commandMode = false;
           }
+          if (event.key === "Backspace") {
+            // Hide command menu
+            document.getElementById("tooltipList").style.display = "none";
+            document.getElementById("tooltipList").innerHTML = "";
+            commandMode = false;
+            if (event.target.value === "") {
+              vscode.postMessage({
+                command: "deleteElement",
+                id: event.target.id,
+              });
+            }
+          }
           if (event.key === "Enter") {
             //Check if in command Mode
             if (commandMode) {
@@ -332,7 +349,7 @@ export class VNoteManager {
               // Add new item
               let element = {
                 type: "text",
-                content: event.target.value,
+                content: "",
                 id: 100,
               };
               vscode.postMessage({

@@ -24,7 +24,7 @@ export abstract class VNoteContent {
       return new ListContent(list, data.id);
     } else if (data.type === "todoList") {
         let list: TodoItem[] = data.content.map((item: any) => {
-            return new TodoItem(item.content, item.done, item.id);
+            return new TodoItem(item.content, item.done, item.id, data.id);
         });
       return new TodoListContent(list, data.id);
     }  else if (data.type === "h1") {
@@ -173,11 +173,13 @@ export class TodoItem extends VNoteContent {
   content: string;
   done: boolean;
   id: number;
-  constructor(content: string, done: boolean, id: number) {
+  parent_id: number;
+  constructor(content: string, done: boolean, id: number, parent_id: number) {
     super();
     this.content = content;
     this.done = done;
     this.id = id;
+    this.parent_id = parent_id;
   }
 
   toHTML(): string {
