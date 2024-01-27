@@ -14,6 +14,10 @@ export abstract class VNoteContent {
     throw new Error("Not implemented in abstract class with map");
   }
 
+  updateContent(content: string) {
+    throw new Error("Not implemented");
+  }
+
   static fromJSON(data: any): VNoteContent {
     if (data.type === "text") {
       return new TextContent(data.content, data.id);
@@ -66,6 +70,10 @@ export class TextContent extends VNoteContent {
       throw new Error("Duplicate id in text");
     }
     map.set(this.id, this);
+  }
+
+  updateContent(content: string) {
+    this.text = content;
   }
 }
 
@@ -165,6 +173,7 @@ export class TodoListContent extends VNoteContent {
       const element = this.list[i];
       element.parseID(map);
     }
+  
   }
   
 }
@@ -209,6 +218,10 @@ export class TodoItem extends VNoteContent {
     }
     map.set(this.id, this);
   }
+
+  updateContent(content: string): void {
+    this.content = content;
+  }
 }
 
 export class Heading1Content extends VNoteContent {
@@ -233,6 +246,10 @@ export class Heading1Content extends VNoteContent {
       throw new Error("Duplicate id in heading 1");
     }
     map.set(this.id, this);
+  }
+
+  updateContent(content: string): void {
+    this.content = content;
   }
 }
 
@@ -259,6 +276,10 @@ export class Heading2Content extends VNoteContent {
     }
     map.set(this.id, this);
   }
+
+  updateContent(content: string): void {
+    this.content = content;
+  }
 }
 
 export class Heading3Content extends VNoteContent {
@@ -283,5 +304,9 @@ export class Heading3Content extends VNoteContent {
       throw new Error("Duplicate id in heading 3");
     }
     map.set(this.id, this);
+  }
+
+  updateContent(content: string): void {
+    this.content = content;
   }
 }

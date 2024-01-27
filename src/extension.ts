@@ -71,10 +71,6 @@ export function activate(context: vscode.ExtensionContext) {
         case "addElement":
           console.log("Adding element in message");
           message.element.id = openedVNote.data.getNextId();
-          openedVNote.data.idMap.set(
-            message.element.id,
-            message.element.content
-          );
           console.log(message.element);
 
           //Handling the case of a bullate list

@@ -10,14 +10,14 @@ export class VNoteManager {
   deleteNote() {}
   deleteElement(vnote: VNote, id: number) {
     console.log("Deleting element in manager");
-    const focusID =  vnote.data.deleteElement(+id);
+    const focusID = vnote.data.deleteElement(+id);
     vnote.save();
     return focusID;
   }
   updateElement(vnote: VNote, id: number, content: string) {
     console.log("Updating content in manager");
     let element = vnote.data.getElementById(+id);
-    element.content = content;
+    element.updateContent(content);
     vnote.save();
   }
   saveVNote(vnote: VNote) {}
@@ -25,7 +25,6 @@ export class VNoteManager {
     console.log("Adding element in manager");
     vnote.data.addElement(element);
     vnote.save();
-
   }
   toggleTodoItem(vnote: VNote, id: number) {
     console.log("Toggling todo item");
@@ -45,7 +44,7 @@ export class VNoteManager {
    */
   getHTMLContent(vnote: VNote): string {
     let vNoteData: VNoteData = vnote.data;
-    if(vNoteData.elements.length === 0) {
+    if (vNoteData.elements.length === 0) {
       vnote.loadData();
     }
     let generatedHTML = vNoteData.toHTML();

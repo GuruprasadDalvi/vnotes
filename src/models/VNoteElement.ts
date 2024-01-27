@@ -29,4 +29,8 @@ export class VNoteElement {
     setContent(content: VNoteContent) {
         this.content = content;
     }
+
+    updateContent(content: string) {
+        this.content.updateContent(content);
+    }
 }

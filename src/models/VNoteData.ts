@@ -54,6 +54,21 @@ export class VNoteData {
 
     addElement(element: VNoteElement) {
         this.elements.push(element);
+        this.idMap.set(element.id, element.content);
+        switch (element.type) {
+            case "todoList":
+                console.log("Added todo list");
+                this.idMap.set(element.content.list[0].id, element.content.list[0]);
+                break;
+            case "bl":
+                console.log("Added bl");
+                this.idMap.set(element.content.list[0].id, element.content.list[0]);
+                break;
+            default:
+                console.log("Added new element");
+                break;
+        }
+        console.log("Added new element");   
     }
     
 
@@ -75,12 +90,12 @@ export class VNoteData {
             if (element.type == "todoList") {
                 let l = element.content.list.length;
                 console.log("length" + l);
-                if(l==1){
-                        return true;
-                }
                 for (let i = 0; i < element.content.list.length; i++) {
                     const item = element.content.list[i];
                     if (item.id == id) {
+                        if(l==1){
+                                return true;
+                        }
                         console.log("Deleting item from todo list, id: " + id );
                         element.content.list.splice(i, 1);
                         newFocusId = element.content.list[i-1].id;
@@ -91,11 +106,11 @@ export class VNoteData {
             else if (element.type == "bl") {
                 let l = element.content.list.length;
                 console.log("length" + l);
-                if(l==1){
-                        return true;
-                }
                 for (let i = 0; i < element.content.list.length; i++) {
                     const item = element.content.list[i];
+                    if(l==1){
+                            return true;
+                    }
                     if (item.id == id) {
                         console.log("Deleting item from bl, id: " + id );
                         element.content.list.splice(i, 1);
