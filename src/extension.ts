@@ -6,7 +6,7 @@ import * as vscode from "vscode";
 import { VNote } from "./models/VNote";
 import { VNotesProvider } from "./providers/VNotesProvider";
 import { VNoteManager } from "./manager/VNoteManager";
-import { TextContent, TodoItem, VNoteContent } from "./models/VNoteContaint";
+import { ListTextContent, TextContent, TodoItem, VNoteContent } from "./models/VNoteContaint";
 import { VNoteElement } from "./models/VNoteElement";
 
 // This method is called when your extension is activated
@@ -76,19 +76,44 @@ export function activate(context: vscode.ExtensionContext) {
           //Handling the case of a bullate list
           if (message.element.type == "bl") {
             message.element.content[0].id = openedVNote.data.getNextId();
-            openedVNote.data.idMap.set(
-              message.element.content[0].id,
-              message.element.content[0]
-            );
           }
           //Handling the case of a todo list
           else if (message.element.type == "todoList") {
             message.element.content[0].id = openedVNote.data.getNextId();
-            openedVNote.data.idMap.set(
-              message.element.content[0].id,
-              message.element.content[0]
-            );
           }
+          else if(message.element.type == "todoItem"){
+            //SPACIAL CASE TodoItem
+            let sibling = openedVNote.data.getElementById(+message.element.sibling_id);
+            let parent_id = sibling.parent_id;
+            let parent = openedVNote.data.idMap.get(parent_id);
+            parent.list.push(new TodoItem(message.element.content, false, message.element.id, parent_id));
+            openedVNote.save();
+            openedVNote.data.createIDMap();
+            panel.webview.html = vnoteManager.getHTMLContent(vnote);
+            panel.webview.postMessage({
+              command: "updateFocus",
+              id: message.element.id,
+            });
+            break;
+          }
+          else if(message.element.type == "listText"){
+            //SPACIAL CASE ListText
+            let sibling = openedVNote.data.getElementById(+message.element.sibling_id);
+            let parent_id = sibling.parent_id;
+            let parent = openedVNote.data.idMap.get(parent_id);
+            let lt = new ListTextContent(message.element.content, message.element.id);
+            lt.parent_id = parent_id;
+            parent.list.push(lt);
+            openedVNote.save();
+            openedVNote.data.createIDMap();
+            panel.webview.html = vnoteManager.getHTMLContent(vnote);
+            panel.webview.postMessage({
+              command: "updateFocus",
+              id: message.element.id,
+            });
+            break;
+          }
+
 
           let vnoteElement = VNoteElement.fromJSON(message.element);
           console.log("vnoteElement");

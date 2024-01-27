@@ -23,7 +23,9 @@ export abstract class VNoteContent {
       return new TextContent(data.content, data.id);
     } else if (data.type === "bl") {
       let list: TextContent[] = data.content.map((item: any) => {
-        return new TextContent(item.content, item.id);
+        let element = new TextContent(item.content, item.id);
+        element.parent_id = data.id;
+        return element;
       });
       return new ListContent(list, data.id);
     } else if (data.type === "todoList") {
@@ -37,8 +39,13 @@ export abstract class VNoteContent {
       return new Heading2Content(data.content, data.id);
     } else if (data.type === "h3") {
       return new Heading3Content(data.content, data.id);
-    } else {
-      throw new Error("Unknown type");
+    } else if(data.type === "todoItem"){
+      return new TodoItem(data.content, data.done, data.id, data.parent_id);
+    } else if(data.type === "listText"){
+      return new ListTextContent(data.content, data.id);
+    }
+     else {
+      throw new Error("Unknown type: "+data.type);
     }
   }
 }
@@ -46,6 +53,7 @@ export abstract class VNoteContent {
 export class TextContent extends VNoteContent {
   text: string;
   id: number;
+  parent_id: number = NaN;
   constructor(text: string, id: number) {
     super();
     this.text = text;
@@ -77,8 +85,42 @@ export class TextContent extends VNoteContent {
   }
 }
 
+export class ListTextContent extends VNoteContent {
+  text: string;
+  id: number;
+  parent_id: number = NaN;
+  constructor(text: string, id: number) {
+    super();
+    this.text = text;
+    this.id = id;
+  }
+
+  toHTML(): string {
+    return `<div class="container"> <div class="add_button">+</div><INPUT id="${this.id}" class="text listText" tabindex="${this.id}"  placeholder="type '/' to enter command mode" name="editor" value='${this.text}' /> <br/></div>`;
+  }
+  fromJSON(data: any): VNoteContent {
+    return new TextContent(data.text, data.id);
+  }
+  toJSON(): string {
+    return JSON.stringify({ content: this.text, id: this.id, type: "listText" });
+  }
+  toObject(): any {
+    return this.text
+  }
+
+  parseID(map:  Map<number, VNoteContent>) {
+    if (map.has(this.id)) {
+      throw new Error("Duplicate id in text");
+    }
+    map.set(this.id, this);
+  }
+
+  updateContent(content: string) {
+    this.text = content;
+  }
+}
 export class ListContent extends VNoteContent {
-  list: TextContent[];
+  list: ListTextContent[];
   id: number;
   constructor(list: TextContent[], id: number) {
     super();
@@ -90,7 +132,7 @@ export class ListContent extends VNoteContent {
     let html = `<ul id = "${this.id}">`;
     for (let i = 0; i < this.list.length; i++) {
       const element = this.list[i];
-      html += `<div class="container"> <div class="add_button">+</div><li><INPUT id="${element.id}" class="text" tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.text}' /></li> <br/></div>`;
+      html += `<div class="container"> <div class="add_button">+</div><li><INPUT id="${element.id}" class="text listText" tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.text}' /></li> <br/></div>`;
     }
     html += "</ul>";
     return html;
@@ -106,7 +148,7 @@ export class ListContent extends VNoteContent {
         return {
           content: item.text,
           id: item.id,
-          type: "text"
+          type: "listText"
         };
       })
     }
@@ -138,9 +180,9 @@ export class TodoListContent extends VNoteContent {
     for (let i = 0; i < this.list.length; i++) {
       const element = this.list[i];
       if (element.done) {
-        html += `<div class="container"> <div class="add_button">+</div><li class="checked"><input type="checkbox" id="${element.id}_box" name="todo_box"  checked  ><INPUT id="${element.id}" class="text checked" tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.content}' /></li></div>`;
+        html += `<div class="container"> <div class="add_button">+</div><li class="checked"><input type="checkbox" id="${element.id}_box" name="todo_box"  checked  ><INPUT id="${element.id}" class="text checked todoText" tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.content}' /></li></div>`;
       } else {
-        html += `<div class="container"> <div class="add_button">+</div><li><input type="checkbox" id="${element.id}_box" name="todo_box" ><INPUT id="${element.id}" class="text"  tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.content}' /></li></div>`;
+        html += `<div class="container"> <div class="add_button">+</div><li><input type="checkbox" id="${element.id}_box" name="todo_box" ><INPUT id="${element.id}" class="text todoText"  tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.content}' /></li></div>`;
       }
     }
     html += "</ul>";

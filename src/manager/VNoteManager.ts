@@ -276,6 +276,7 @@ export class VNoteManager {
         const message = event.data;
         switch (message.command) {
           case "updateFocus":
+            console.log("Updating focus: " + message.id);
             document.getElementById(message.id).focus();
             break;
         }
@@ -345,16 +346,49 @@ export class VNoteManager {
               commandMode = false;
             }
             else {
-              // Add new item
-              let element = {
-                type: "text",
-                content: "",
-                id: 100,
-              };
-              vscode.postMessage({
-                command: "addElement",
-                element: element,
-              });
+              console.log("Enter pressed");
+              console.log(event.target.classList);
+              if(event.target.classList.contains("todoText")){
+                // Add new todo item
+                console.log("Adding new todo item");
+                let element = {
+                  type: "todoItem",
+                  content: "",
+                  done: false,
+                  id: 100,
+                  sibling_id: event.target.id
+                };
+                vscode.postMessage({
+                  command: "addElement",
+                  element: element,
+                });
+              }
+              else if(event.target.classList.contains("listText")){
+                console.log("Adding new list item");
+                // Add new  list item
+                let element = {
+                  type: "listText",
+                  content: "",
+                  id: 100,
+                  sibling_id: event.target.id
+                };
+                vscode.postMessage({
+                  command: "addElement",
+                  element: element,
+                });
+              }
+              else{
+                // Add new  text item
+                let element = {
+                  type: "text",
+                  content: "",
+                  id: 100,
+                };
+                vscode.postMessage({
+                  command: "addElement",
+                  element: element,
+                });
+              }
             }
           }
         });
