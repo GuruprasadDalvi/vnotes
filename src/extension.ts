@@ -14,18 +14,15 @@ import { VNoteElement } from "./models/VNoteElement";
 export function activate(context: vscode.ExtensionContext) {
   const vnotesProvider = new VNotesProvider();
   const vnoteManager = new VNoteManager();
+  const FOCUS_DELAY = 100;
   let openedVNote: VNote;
+
+
   vscode.window.registerTreeDataProvider("vnotesView", vnotesProvider);
   vscode.commands.registerCommand("vnotes.refresh", () =>
     vnotesProvider.refresh()
   );
 
-  const disposable = vscode.commands.registerCommand(
-    "vnotes.helloWorld",
-    () => {
-      vscode.window.showInformationMessage("Hello World from vnotes!");
-    }
-  );
   vscode.commands.registerCommand("vnotes.addEntry", async () => {
     try {
       const noteName = await vscode.window.showInputBox({
@@ -44,7 +41,7 @@ export function activate(context: vscode.ExtensionContext) {
       }
       const filePath = path.join(dirPath, `${noteName}.vnote`);
       vscode.window.showInformationMessage(`Creating ${filePath}`);
-      fs.writeFileSync(filePath, "[]");
+      fs.writeFileSync(filePath, "[{\n\t\"type\": \"text\",\n\t\"content\": \"\"\n, \"id\": 0\n}]");
       vscode.window.showInformationMessage(`Created ${filePath}`);
       vnotesProvider.refresh();
     } catch (error) {
@@ -71,7 +68,7 @@ export function activate(context: vscode.ExtensionContext) {
         case "addElement":
           console.log("Adding element in message");
           message.element.id = openedVNote.data.getNextId();
-          console.log(message.element);
+          console.log("new element id: "+message.element);
 
           //Handling the case of a bullate list
           if (message.element.type == "bl") {
@@ -90,10 +87,14 @@ export function activate(context: vscode.ExtensionContext) {
             openedVNote.save();
             openedVNote.data.createIDMap();
             panel.webview.html = vnoteManager.getHTMLContent(vnote);
-            panel.webview.postMessage({
-              command: "updateFocus",
-              id: message.element.id,
-            });
+            console.log("new todo element id: "+message.element.id);
+            //sleep for 500ms
+            setTimeout(()=>{
+              panel.webview.postMessage({
+                command: "updateFocus",
+                id: message.element.id,
+              });
+            }, FOCUS_DELAY);
             break;
           }
           else if(message.element.type == "listText"){
@@ -107,41 +108,54 @@ export function activate(context: vscode.ExtensionContext) {
             openedVNote.save();
             openedVNote.data.createIDMap();
             panel.webview.html = vnoteManager.getHTMLContent(vnote);
-            panel.webview.postMessage({
-              command: "updateFocus",
-              id: message.element.id,
-            });
+            console.log("new list element id: "+message.element.id);
+            
+            setTimeout(()=>{
+              panel.webview.postMessage({
+                command: "updateFocus",
+                id: message.element.id,
+              });
+            }, FOCUS_DELAY);
             break;
           }
 
 
           let vnoteElement = VNoteElement.fromJSON(message.element);
-          console.log("vnoteElement");
-          console.log(vnoteElement);
           vnoteManager.addElement(openedVNote, vnoteElement);
           panel.webview.html = vnoteManager.getHTMLContent(vnote);
           if (message.element.type == "bl") {
-            panel.webview.postMessage({
-              command: "updateFocus",
-              id: message.element.content[0].id,
-            });
+            console.log("Updating focus to first element of list: "+message.element.content[0].id);
+            
+            setTimeout(()=>{
+              panel.webview.postMessage({
+                command: "updateFocus",
+                id: message.element.content[0].id,
+              });
+            }, FOCUS_DELAY);
             
           }
           else if (message.element.type == "todoList") {
-            panel.webview.postMessage({
-              command: "updateFocus",
-              id: message.element.content[0].id,
-            });
+            console.log("Updating focus to first element of todo: "+message.element.content[0].id);
+            
+            setTimeout(()=>{
+              panel.webview.postMessage({
+                command: "updateFocus",
+                id: message.element.content[0].id,
+              });
+            }, FOCUS_DELAY);
           }
           else {
-            panel.webview.postMessage({
-              command: "updateFocus",
-              id: message.element.id,
-            });
+            console.log("Updating focus to new element: "+message.element.id);
+            
+            setTimeout(()=>{
+              panel.webview.postMessage({
+                command: "updateFocus",
+                id: message.element.id,
+              });
+            }, FOCUS_DELAY);
           }
           break;
         case "updateContent":
-          console.log("Updating element in message");
           const id  = message.id;
           const content = message.content;
           vnoteManager.updateElement(openedVNote, id, content);
@@ -159,27 +173,69 @@ export function activate(context: vscode.ExtensionContext) {
           const focusID = vnoteManager.deleteElement(openedVNote, elementId);
           panel.webview.html = vnoteManager.getHTMLContent(vnote);
           if (focusID != -1) {
-            panel.webview.postMessage({
-              command: "updateFocus",
-              id: focusID,
-            });
+            console.log("Updating focus to element: "+focusID); 
+            setTimeout(()=>{
+              panel.webview.postMessage({
+                command: "updateFocus",
+                id: focusID,
+              });
+            }, FOCUS_DELAY);
           }
           else{
-            panel.webview.postMessage({
-              command: "updateFocus",
-              id: "newItem",
-            });
+            
+            setTimeout(()=>{
+              panel.webview.postMessage({
+                command: "updateFocus",
+                id: message.element.id,
+              });
+            }, FOCUS_DELAY);
           }
           break;
-      }
+        case "swapToText":
+          console.log("Swapping to text");
+          const textId = message.id;
+          vnoteManager.swapToText(openedVNote, textId);
+          panel.webview.html = vnoteManager.getHTMLContent(vnote);
+         
+          setTimeout(()=>{
+            panel.webview.postMessage({
+              command: "updateFocus",
+              id: message.element.id,
+            });
+          }, FOCUS_DELAY);
+          break;
+        case "swapToNewElement":
+          console.log("Swapping to new element");
+          const newElementId = +message.id;
+          message.element.id = newElementId;
+          let idToFocus =newElementId;
+
+          //SPACIAL CASE todo List
+          if (message.element.type == "todoList") {
+            message.element.content[0].id = openedVNote.data.getNextId();
+            idToFocus = message.element.content[0].id;
+          }
+          let newVNoteElement = VNoteElement.fromJSON(message.element);
+          vnoteManager.swapToNewElement(openedVNote, newElementId, newVNoteElement);
+
+          panel.webview.html = vnoteManager.getHTMLContent(vnote);
+          setTimeout(()=>{
+            panel.webview.postMessage({
+              command: "updateFocus",
+              id: idToFocus,
+            });
+          }, FOCUS_DELAY);
+          break;
+        }
 
     });
 
     vnote.loadData();
     const content = vnoteManager.getHTMLContent(vnote);
+    console.log("Opening note");
+    console.log(content);
     panel.webview.html = content;
     openedVNote = vnote;
   });
 
-  context.subscriptions.push(disposable);
 }

@@ -2,6 +2,7 @@ import { VNote } from "../models/VNote";
 import * as fs from "fs";
 import { VNoteElement } from "../models/VNoteElement";
 import { VNoteData } from "../models/VNoteData";
+import { TextContent } from "../models/VNoteContaint";
 
 export class VNoteManager {
   constructor() {}
@@ -15,7 +16,6 @@ export class VNoteManager {
     return focusID;
   }
   updateElement(vnote: VNote, id: number, content: string) {
-    console.log("Updating content in manager");
     let element = vnote.data.getElementById(+id);
     element.updateContent(content);
     vnote.save();
@@ -30,6 +30,21 @@ export class VNoteManager {
     console.log("Toggling todo item");
     let element = vnote.data.getElementById(+id);
     element.done = !element.done;
+    vnote.save();
+  }
+  swapToText(vnote: VNote, id: number) {
+    console.log("Swapping to text");
+    let textElement = new VNoteElement("text", new TextContent("",+id), +id);
+    vnote.data.deleteElement(+id);
+    vnote.data.addElement(textElement);
+    vnote.save();
+  }
+
+  swapToNewElement(vnote: VNote, id: number, element: VNoteElement) {
+    console.log("Swapping to new element");
+    vnote.data.deleteElement(+id);
+    vnote.data.addElement(element);
+    vnote.data.createIDMap();
     vnote.save();
   }
 
@@ -75,8 +90,7 @@ export class VNoteManager {
           color: rgba(155,155,155,0.5);
         }
         .text {
-          width: fit-content;
-          min-width: 0;
+          min-width: 32ch;
           background-color: transparent;
           border: 0;
           padding: 5px;
@@ -87,6 +101,9 @@ export class VNoteManager {
           font-size: 15px;
           color: white;
           overflow: hidden;
+        }
+        input:focus {
+          outline: none;
         }
         .add_button {
           width: 20px;
@@ -171,13 +188,11 @@ export class VNoteManager {
       Last updated on: ${lastUpdatedDateTime}<br />
       <hr />
       ${generatedHTML}
-      <input
-        type="text"
-        id="newItem"
-        placeholder="type '/' to enter command mode"
-        class="text editor"
-        name="editor"
-      />
+      <div class="container"> 
+        <div class="add_button">+</div>
+        <INPUT id="newItem" class="text" tabindex="-1"  placeholder="type '/' to enter command mode" name="editor" value='' /> 
+        <br/>
+      </div>
       <br />
     </body>
   
@@ -231,11 +246,13 @@ export class VNoteManager {
         },
       };
       const textInput = document.getElementById("newItem");
-      textInput.addEventListener("keydown", function (event) {
-        if (event.key === "/") {
-          commandMode = true;
-        }
-      });
+      if (textInput) {
+        textInput.addEventListener("keydown", function (event) {
+          if (event.key === "/") {
+            commandMode = true;
+          }
+        });
+      }
   
       const addElement = () => {
         let element = {
@@ -330,14 +347,23 @@ export class VNoteManager {
               populateListAction(event.target.value);
               //get the first element in command menu
               const firstElement = document.getElementById("tooltipList")
-
               //add new element
               let actionKey = firstElement.firstElementChild.id;
               let element = actionElements[actionKey];
-              vscode.postMessage({
-                command: "addElement",
-                element: element,
-              });
+
+              if(event.target.classList.contains("normalText") ){
+                vscode.postMessage({
+                  command: "swapToNewElement",
+                  id: event.target.id,
+                  element: element,
+                });
+              }
+                else{
+                  vscode.postMessage({
+                    command: "addElement",
+                    element: element,
+                  });
+                }
 
 
               // Hide command menu
@@ -346,7 +372,6 @@ export class VNoteManager {
               commandMode = false;
             }
             else {
-              console.log("Enter pressed");
               console.log(event.target.classList);
               if(event.target.classList.contains("todoText")){
                 // Add new todo item

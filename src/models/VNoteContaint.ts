@@ -61,7 +61,7 @@ export class TextContent extends VNoteContent {
   }
 
   toHTML(): string {
-    return `<div class="container"> <div class="add_button">+</div><INPUT id="${this.id}" class="text" tabindex="${this.id}"  placeholder="type '/' to enter command mode" name="editor" value='${this.text}' /> <br/></div>`;
+    return `<div class="container"> <div class="add_button">+</div><INPUT id="${this.id}" class="text normalText" tabindex="${this.id}"  placeholder="type '/' to enter command mode" name="editor" value='${this.text}' /> <br/></div>`;
   }
   fromJSON(data: any): VNoteContent {
     return new TextContent(data.text, data.id);
