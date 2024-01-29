@@ -18,7 +18,8 @@ export class VNotesProvider implements vscode.TreeDataProvider<VNote> {
     }
 
     getTreeItem(element: VNote): vscode.TreeItem {
-        const treeItem = new vscode.TreeItem(element.title, vscode.TreeItemCollapsibleState.None);
+        // const treeItem = new vscode.TreeItem(element.title, vscode.TreeItemCollapsibleState.None);
+        const treeItem = new VNoteNode(element, element.title, vscode.TreeItemCollapsibleState.None);
         treeItem.command = { command: "vnotes.openNote", title: "Open Note", arguments: [element] };
         return treeItem;
     }
@@ -45,5 +46,21 @@ export class VNotesProvider implements vscode.TreeDataProvider<VNote> {
                 resolve(vnotes);
             });
         }
+    }
+}
+
+class VNoteNode extends vscode.TreeItem {
+    constructor(
+        public vnote: VNote,
+        public readonly label: string,
+        public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+        // public readonly iconPath = 'src/resources/dependency.svg'
+    ) {
+        super(label, collapsibleState);
+        this.tooltip = `${this.vnote.filePath}`;
+        this.iconPath = {
+            light: path.join(__dirname, '..', '..','src', 'resources','light', 'Note.svg'),
+            dark: path.join(__dirname, '..', '..','src', 'resources','dark', 'Note.svg')
+        };
     }
 }

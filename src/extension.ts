@@ -215,6 +215,10 @@ export function activate(context: vscode.ExtensionContext) {
             message.element.content[0].id = openedVNote.data.getNextId();
             idToFocus = message.element.content[0].id;
           }
+          else if(message.element.type == "bl"){
+            message.element.content[0].id = openedVNote.data.getNextId();
+            idToFocus = message.element.content[0].id;
+          }
           let newVNoteElement = VNoteElement.fromJSON(message.element);
           vnoteManager.swapToNewElement(openedVNote, newElementId, newVNoteElement);
 

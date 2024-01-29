@@ -14,25 +14,31 @@
   "contributes": {
     "commands": [
       {
-        "command": "vnotes.helloWorld",
-        "title": "Hello World"
-      },
-      {
         "command": "vnotes.addEntry",
-        "title": "Add VNote"
+        "title": "Add VNote",
+        "category": "VNotes",
+        "icon": "src/resources/AppIcon.svg"
       }
     ],
     "viewsWelcome": [
       {
         "view": "vnotesView",
-        "contents": "[Add New VNote](command:vnotes.addEntry)"
+        "contents": "No VNotes yet! Create your first VNote to get started.\n[Create New VNote](command:vnotes.addEntry)"
       }
     ],
     "views": {
       "vnotes": [
         {
           "id": "vnotesView",
-          "name": "VNotes View"
+          "name": ""
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "vnotes.addEntry",
+          "when": "view == vnotesView"
         }
       ]
     },
@@ -41,7 +47,7 @@
         {
           "id": "vnotes",
           "title": "vnotes",
-          "icon": "src/resources/vnotes.svg"
+          "icon": "src/resources/AppIcon.svg"
         }
       ]
     }

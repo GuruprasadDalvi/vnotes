@@ -61,7 +61,7 @@ export class TextContent extends VNoteContent {
   }
 
   toHTML(): string {
-    return `<div class="container"> <div class="add_button">+</div><INPUT id="${this.id}" class="text normalText" tabindex="${this.id}"  placeholder="type '/' to enter command mode" name="editor" value='${this.text}' /> <br/></div>`;
+    return `<div class="container"> <button class="add_button" onclick="addElement()">+</button><INPUT id="${this.id}" class="text normalText" tabindex="${this.id}"  placeholder="type '/' to enter command mode" name="editor" value='${this.text}' /> <br/></div>`;
   }
   fromJSON(data: any): VNoteContent {
     return new TextContent(data.text, data.id);
@@ -96,7 +96,7 @@ export class ListTextContent extends VNoteContent {
   }
 
   toHTML(): string {
-    return `<div class="container"> <div class="add_button">+</div><INPUT id="${this.id}" class="text listText" tabindex="${this.id}"  placeholder="type '/' to enter command mode" name="editor" value='${this.text}' /> <br/></div>`;
+    return `<div class="container"> <button class="add_button" onclick="addElement()">+</button><INPUT id="${this.id}" class="text listText" tabindex="${this.id}"  placeholder="type '/' to enter command mode" name="editor" value='${this.text}' /> <br/></div>`;
   }
   fromJSON(data: any): VNoteContent {
     return new TextContent(data.text, data.id);
@@ -132,7 +132,7 @@ export class ListContent extends VNoteContent {
     let html = `<ul id = "${this.id}">`;
     for (let i = 0; i < this.list.length; i++) {
       const element = this.list[i];
-      html += `<div class="container"> <div class="add_button">+</div><li><INPUT id="${element.id}" class="text listText" tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.text}' /></li> <br/></div>`;
+      html += `<div class="container"> <button class="add_button" onclick="addElement()">+</button><li><INPUT id="${element.id}" class="text listText" tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.text}' /></li> <br/></div>`;
     }
     html += "</ul>";
     return html;
@@ -180,9 +180,9 @@ export class TodoListContent extends VNoteContent {
     for (let i = 0; i < this.list.length; i++) {
       const element = this.list[i];
       if (element.done) {
-        html += `<div class="container"> <div class="add_button">+</div><li class="checked"><input type="checkbox" id="${element.id}_box" name="todo_box"  checked  ><INPUT id="${element.id}" class="text checked todoText" tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.content}' /></li></div>`;
+        html += `<div class="container"> <button class="add_button" onclick="addElement()">+</button><li class="checked"><input type="checkbox" id="${element.id}_box" name="todo_box"  checked  ><INPUT id="${element.id}" class="text checked todoText" tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.content}' /></li></div>`;
       } else {
-        html += `<div class="container"> <div class="add_button">+</div><li><input type="checkbox" id="${element.id}_box" name="todo_box" ><INPUT id="${element.id}" class="text todoText"  tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.content}' /></li></div>`;
+        html += `<div class="container"> <button class="add_button" onclick="addElement()">+</button><li><input type="checkbox" id="${element.id}_box" name="todo_box" ><INPUT id="${element.id}" class="text todoText"  tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.content}' /></li></div>`;
       }
     }
     html += "</ul>";

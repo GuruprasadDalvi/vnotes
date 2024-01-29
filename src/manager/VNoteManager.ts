@@ -74,6 +74,7 @@ export class VNoteManager {
       <style>
         body {
           font-family: sans-serif;
+          overflow-x: hidden;
         }
         h1 {
           margin-bottom: 0;
@@ -87,7 +88,7 @@ export class VNoteManager {
           text-decoration: line-through;
           text-decoration-color: red;
           brightness: 0.5;
-          color: rgba(155,155,155,0.5);
+          opacity: 0.5;
         }
         .text {
           min-width: 32ch;
@@ -99,11 +100,15 @@ export class VNoteManager {
           resize: none;
           font-family: inherit;
           font-size: 15px;
-          color: white;
           overflow: hidden;
+          width: 100%;
+        }
+        input[type="text"] {
+          transition: 0.4s ease-in-out;
         }
         input:focus {
           outline: none;
+          border-bottom: 1px solid;
         }
         .add_button {
           width: 20px;
@@ -161,6 +166,7 @@ export class VNoteManager {
           box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
           z-index: 100;
           display: none;
+          opacity: 0.9;
         }
         .tooltipList li {
           border-bottom: 1px solid #bbbbbb;
@@ -189,8 +195,7 @@ export class VNoteManager {
       <hr />
       ${generatedHTML}
       <div class="container"> 
-        <div class="add_button">+</div>
-        <INPUT id="newItem" class="text" tabindex="-1"  placeholder="type '/' to enter command mode" name="editor" value='' /> 
+        <INPUT id="newItem" class="text" tabindex="-1"  placeholder="type '/' to add new element" name="editor" value='' /> 
         <br/>
       </div>
       <br />
