@@ -4,7 +4,7 @@
   <style>
     body {
       font-family: sans-serif;
-      background-color: violet;
+      overflow-x: hidden;
     }
 
     h1 {
@@ -21,7 +21,7 @@
       text-decoration: line-through;
       text-decoration-color: red;
       brightness: 0.5;
-      color: rgba(155, 155, 155, 0.5);
+      opacity: 0.5;
     }
 
     .text {
@@ -34,12 +34,17 @@
       resize: none;
       font-family: inherit;
       font-size: 15px;
-      color: white;
       overflow: hidden;
+      width: 100%;
+    }
+
+    input[type="text"] {
+      transition: 0.4s ease-in-out;
     }
 
     input:focus {
       outline: none;
+      border-bottom: 1px solid;
     }
 
     .add_button {
@@ -105,6 +110,7 @@
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
       z-index: 100;
       display: none;
+      opacity: 0.9;
     }
 
     .tooltipList li {
@@ -134,7 +140,7 @@
   <div class="tooltipList" id="tooltipList"></div>
   <h1>All Content</h1>
   Created on: 1/14/2024, 11:49:25 AM<br />
-  Last updated on: 1/28/2024, 10:30:14 PM<br />
+  Last updated on: 1/30/2024, 12:00:04 AM<br />
   <hr />
   <div class="container"> <button class="add_button" onclick="addElement()">+</button>
     <h1><INPUT id="0" class="text h1" tabindex="0" placeholder="Heading 1" name="editor"
@@ -152,21 +158,34 @@
     <h1><INPUT id="13" class="text h1" tabindex="13" placeholder="Heading 1" name="editor" value='This is heading 1' />
     </h1>
   </div>
-  <div class="container"> <button class="add_button" onclick="addElement()">+</button><INPUT id="22"
-      class="text normalText" tabindex="22" placeholder="type '/' to enter command mode" name="editor"
-      value='This is text' /> <br /></div>
+  <div class="container"> <button class="add_button" onclick="addElement()">+</button><textarea id="22"
+      class="text normalText" tabindex="22" placeholder="type '/' to enter command mode"
+      name="editor">This is text</textarea> <br /></div>
   <ul id="32">
-    <div class="container">
-      <li> <button class="add_button" onclick="addElement()">+</button><INPUT id="33" class="text listText"
-          tabindex="33" placeholder="type '/' to enter command mode" name="editor" value='This is bullet 1' /></li>
-      <br />
+    <div class="container"> <button class="add_button" onclick="addElement()">+</button>
+      <li><INPUT id="33" class="text listText" tabindex="33" placeholder="type '/' to enter command mode" name="editor"
+          value='This is bullet 1' /></li> <br />
     </div>
-    <div class="container">
-      <button class="add_button" onclick="addElement()">+</button><li> <INPUT id="34" class="text listText"
-          tabindex="34" placeholder="type '/' to enter command mode" name="editor" value='This is bullet 2' /></li>
-      <br />
+    <div class="container"> <button class="add_button" onclick="addElement()">+</button>
+      <li><INPUT id="34" class="text listText" tabindex="34" placeholder="type '/' to enter command mode" name="editor"
+          value='This is bullet 2' /></li> <br />
     </div>
   </ul>
+  <ul class="todoList">
+    <div class="container"> <button class="add_button" onclick="addElement()">+</button>
+      <li><input type="checkbox" id="44_box" name="todo_box"><INPUT id="44" class="text todoText" tabindex="44"
+          placeholder="type '/' to enter command mode" name="editor" value='This is unchecked' /></li>
+    </div>
+    <div class="container"> <button class="add_button" onclick="addElement()">+</button>
+      <li class="checked"><input type="checkbox" id="45_box" name="todo_box" checked><INPUT id="45"
+          class="text checked todoText" tabindex="45" placeholder="type '/' to enter command mode" name="editor"
+          value='This is checked' /></li>
+    </div>
+  </ul>
+  <div class="container"> <button class="add_button" onclick="addElement()">+</button><textarea id="48"
+      class="text normalText" tabindex="48" placeholder="type '/' to enter command mode" style="height: fit-content;" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'
+      name="editor">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sit amet est placerat in egestas. Consectetur adipiscing elit duis tristique sollicitudin nibh sit. Lectus mauris ultrices eros in. Adipiscing elit pellentesque habitant morbi tristique senectus. Cras pulvinar mattis nunc sed blandit libero volutpat sed. Diam vulputate ut pharetra sit amet aliquam id. Odio pellentesque diam volutpat commodo sed egestas egestas fringilla phasellus. Faucibus ornare suspendisse sed nisi lacus. Est sit amet facilisis magna. Sagittis nisl rhoncus mattis rhoncus urna neque viverra. Vehicula ipsum a arcu cursus vitae congue mauris. Fermentum iaculis eu non diam phasellus vestibulum. Massa placerat duis ultricies lacus sed turpis tincidunt id.  Neque laoreet suspendisse interdum consectetur libero id faucibus nisl. Lectus quam id leo in vitae turpis massa sed elementum. Eget arcu dictum varius duis. Egestas maecenas pharetra convallis posuere. Ultrices mi tempus imperdiet nulla malesuada pellentesque elit eget gravida. Risus pretium quam vulputate dignissim suspendisse in. Quam vulputate dignissim suspendisse in est. Posuere ac ut consequat semper viverra nam. Tortor at risus viverra adipiscing at in tellus. Sit amet facilisis magna etiam tempor orci eu. Cursus sit amet dictum sit amet justo donec enim diam. Velit laoreet id donec ultrices. Ligula ullamcorper malesuada proin libero nunc consequat interdum. Laoreet non curabitur gravida arcu ac tortor dignissim convallis aenean. Duis ultricies lacus sed turpis tincidunt id aliquet risus. Faucibus a pellentesque sit amet porttitor eget dolor morbi non. Donec et odio pellentesque diam volutpat commodo sed egestas egestas. A diam sollicitudin tempor id eu nisl nunc mi. Convallis convallis tellus id interdum velit.  Massa id neque aliquam vestibulum morbi blandit. Semper quis lectus nulla at. Aliquam vestibulum morbi blandit cursus risus at ultrices. Pulvinar pellentesque habitant morbi tristique senectus. Risus nec feugiat in fermentum. Vitae congue eu consequat ac felis donec et odio pellentesque. Lobortis mattis aliquam faucibus purus in massa tempor. Volutpat maecenas volutpat blandit aliquam etiam erat velit scelerisque in. Nunc sed blandit libero volutpat sed cras ornare arcu. Massa tempor nec feugiat nisl pretium fusce id. Cras adipiscing enim eu turpis egestas pretium aenean pharetra magna. Leo in vitae turpis massa sed elementum. Neque viverra justo nec ultrices dui sapien eget. Pellentesque habitant morbi tristique senectus et netus et malesuada.  Potenti nullam ac tortor vitae purus faucibus ornare suspendisse sed. Sodales neque sodales ut etiam sit. Aliquet bibendum enim facilisis gravida. Cursus euismod quis viverra nibh cras pulvinar mattis nunc. Dictum varius duis at consectetur lorem. Orci nulla pellentesque dignissim enim sit amet. Viverra ipsum nunc aliquet bibendum enim facilisis gravida neque. Semper quis lectus nulla at volutpat. Non odio euismod lacinia at. Fames ac turpis egestas integer eget. Amet porttitor eget dolor morbi non arcu risus. Sollicitudin aliquam ultrices sagittis orci a scelerisque. Lorem sed risus ultricies tristique nulla aliquet enim tortor at. Elementum facilisis leo vel fringilla est. Justo donec enim diam vulputate ut pharetra sit amet. Ac odio tempor orci dapibus ultrices in iaculis nunc. Pretium nibh ipsum consequat nisl vel.  At erat pellentesque adipiscing commodo elit at imperdiet dui accumsan. Condimentum lacinia quis vel eros. Faucibus turpis in eu mi bibendum neque egestas. Eu scelerisque felis imperdiet proin fermentum leo vel orci. Quis eleifend quam adipiscing vitae proin sagittis nisl rhoncus. Nulla facilisi morbi tempus iaculis urna id volutpat. Malesuada fames ac turpis egestas maecenas pharetra convallis. Nunc lobortis mattis aliquam faucibus purus in massa tempor. Et netus et malesuada fames ac turpis egestas integer. Cursus mattis molestie a iaculis at erat. Pulvinar proin gravida hendrerit lectus a.</textarea>
+    <br /></div>
   <div class="container">
     <INPUT id="newItem" class="text" tabindex="-1" placeholder="type '/' to add new element" name="editor" value='' />
     <br />

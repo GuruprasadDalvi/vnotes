@@ -61,7 +61,7 @@ export class TextContent extends VNoteContent {
   }
 
   toHTML(): string {
-    return `<div class="container"> <button class="add_button" onclick="addElement()">+</button><INPUT id="${this.id}" class="text normalText" tabindex="${this.id}"  placeholder="type '/' to enter command mode" name="editor" value='${this.text}' /> <br/></div>`;
+    return `<div class="container"> <button class="add_button" onclick="addElement()">+</button><textarea id="${this.id}" class="text normalText" tabindex="${this.id}" style="height: fit-content;"  placeholder="type '/' to enter command mode" name="editor" >${this.text}</textarea> <br/></div>`;
   }
   fromJSON(data: any): VNoteContent {
     return new TextContent(data.text, data.id);
@@ -180,9 +180,21 @@ export class TodoListContent extends VNoteContent {
     for (let i = 0; i < this.list.length; i++) {
       const element = this.list[i];
       if (element.done) {
-        html += `<div class="container"> <button class="add_button" onclick="addElement()">+</button><li class="checked"><input type="checkbox" id="${element.id}_box" name="todo_box"  checked  ><INPUT id="${element.id}" class="text checked todoText" tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.content}' /></li></div>`;
+        html += `<div class="container"> <button class="add_button" onclick="addElement()">+</button>
+        <li class="checked">
+        <div class="todo_row">
+        <input type="checkbox" id="${element.id}_box" name="todo_box"  checked  >
+          <INPUT id="${element.id}" class="text checked todoText" tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.content}' />
+        </div>
+        </li></div>`;
       } else {
-        html += `<div class="container"> <button class="add_button" onclick="addElement()">+</button><li><input type="checkbox" id="${element.id}_box" name="todo_box" ><INPUT id="${element.id}" class="text todoText"  tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.content}' /></li></div>`;
+        html += `<div class="container"> <button class="add_button" onclick="addElement()">+</button>
+        <li>
+        <div class="todo_row">
+        <input type="checkbox" id="${element.id}_box" name="todo_box">
+          <INPUT id="${element.id}" class="text todoText" tabindex="${element.id}"  placeholder="type '/' to enter command mode" name="editor" value='${element.content}' />
+        </div>
+        </li></div>`;
       }
     }
     html += "</ul>";

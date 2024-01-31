@@ -75,6 +75,8 @@ export class VNoteManager {
         body {
           font-family: sans-serif;
           overflow-x: hidden;
+          background-color: var(--vscode-editor-background);
+          color: var(--vscode-editor-foreground);
         }
         h1 {
           margin-bottom: 0;
@@ -102,6 +104,7 @@ export class VNoteManager {
           font-size: 15px;
           overflow: hidden;
           width: 100%;
+          color: var(--vscode-editor-foreground);
         }
         input[type="text"] {
           transition: 0.4s ease-in-out;
@@ -131,6 +134,12 @@ export class VNoteManager {
         }
         .container:hover .add_button {
           opacity: 1; /* make the button visible when the container is hovered */
+        }
+        .todo_row {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: flex-start;
         }
         h2,
         h3,
@@ -306,6 +315,14 @@ export class VNoteManager {
       );
       
       document.getElementsByName("editor").forEach((e) => {
+        if(e.classList.contains("normalText") ){
+        e.style.height = "";
+        e.style.height = e.scrollHeight + "px"
+        }
+      });
+
+
+      document.getElementsByName("editor").forEach((e) => {
         e.addEventListener("keydown", function (event) {
           if (commandMode) {
             populateListAction(event.target.value + event.key);
@@ -346,7 +363,7 @@ export class VNoteManager {
               });
             }
           }
-          if (event.key === "Enter") {
+          if (event.key === "Enter" && !event.shiftKey) {
             //Check if in command Mode
             if (commandMode) {
               populateListAction(event.target.value);
