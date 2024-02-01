@@ -1,4 +1,8 @@
 export abstract class VNoteContent {
+  list: VNoteContent[] = [];
+  id: number = NaN;
+  parent_id: number = NaN;
+  done: boolean = false;
   toHTML(): string {
     throw new Error("Not implemented");
   }
@@ -250,7 +254,7 @@ export class TodoItem extends VNoteContent {
   }
 
   fromJSON(data: any): VNoteContent {
-    return new TodoItem(data.content, data.done, data.id);
+    return new TodoItem(data.content, data.done, data.id, data.parent_id);
   }
 
   toJSON(): string {

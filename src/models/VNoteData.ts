@@ -165,7 +165,7 @@ export class VNoteData {
     this.sortedIds = Array.from(this.idMap.keys()).sort((a, b) => a - b);
   }
 
-  getElementById(id: number): VNoteContent {
+  getElementById(id: number): VNoteContent | undefined{
     return this.idMap.get(id);
   }
 }

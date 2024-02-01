@@ -2,10 +2,11 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { VNote } from '../models/VNote';
+import { VNOTE_VIEW_NAME } from '../constant/ApplicationConstants';
 
 export function activate(context: vscode.ExtensionContext) {
     const vnotesProvider = new VNotesProvider();
-    vscode.window.registerTreeDataProvider('vnotesView', vnotesProvider);
+    vscode.window.registerTreeDataProvider(VNOTE_VIEW_NAME, vnotesProvider);
     vscode.commands.registerCommand('vnotes.refresh', () => vnotesProvider.refresh());
 }
 
@@ -28,7 +29,7 @@ export class VNotesProvider implements vscode.TreeDataProvider<VNote> {
         if (element) {
             return Promise.resolve([]);
         } else {
-            const dirPath = path.join(process.env.HOME || process.env.USERPROFILE, "vnotes");
+            const dirPath = path.join(process.env.HOME || process.env.USERPROFILE || "" , "vnotes");
             return new Promise(resolve => {
                 if (!fs.existsSync(dirPath)) {
                     fs.mkdirSync(dirPath);

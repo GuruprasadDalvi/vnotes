@@ -3,12 +3,12 @@ import * as fs from "fs";
 import { VNoteElement } from "../models/VNoteElement";
 import { VNoteData } from "../models/VNoteData";
 import { TextContent } from "../models/VNoteContaint";
+import { ADD_NEW_ELEMENT_MESSAGE, DELETE_ELEMENT_MESSAGE, SWAP_ELEMENT_MESSAGE, TOGGLE_TODO_MESSAGE, UPDATE_CONTENT_MESSAGE, UPDATE_FOCUS_MESSAGE } from "../constant/MessageConstants";
 
 export class VNoteManager {
-  constructor() {}
-  createNewNote() {}
-  openNote() {}
+  
   deleteNote() {}
+
   deleteElement(vnote: VNote, id: number) {
     console.log("Deleting element in manager");
     const focusID = vnote.data.deleteElement(+id);
@@ -17,19 +17,17 @@ export class VNoteManager {
   }
   updateElement(vnote: VNote, id: number, content: string) {
     let element = vnote.data.getElementById(+id);
-    element.updateContent(content);
+    element?.updateContent(content);
     vnote.save();
   }
-  saveVNote(vnote: VNote) {}
-  addElement(vnote: VNote, element: VNoteElement) {
-    console.log("Adding element in manager");
+  addElement(vnote: VNote, element: any) {
     vnote.data.addElement(element);
     vnote.save();
   }
   toggleTodoItem(vnote: VNote, id: number) {
     console.log("Toggling todo item");
     let element = vnote.data.getElementById(+id);
-    element.done = !element.done;
+    element!.done = !element?.done;
     vnote.save();
   }
   swapToText(vnote: VNote, id: number) {
@@ -282,7 +280,7 @@ export class VNoteManager {
           id: 100,
         };
         vscode.postMessage({
-          command: "addElement",
+          command: "${ADD_NEW_ELEMENT_MESSAGE}",
           element: element,
         });
       };
@@ -299,7 +297,7 @@ export class VNoteManager {
             button.innerHTML = key;
             button.addEventListener("click", function () {
               vscode.postMessage({
-                command: "addElement",
+                command: "${ADD_NEW_ELEMENT_MESSAGE}",
                 element: value,
               });
             });
@@ -313,7 +311,7 @@ export class VNoteManager {
       window.addEventListener("message", (event) => {
         const message = event.data;
         switch (message.command) {
-          case "updateFocus":
+          case "${UPDATE_FOCUS_MESSAGE}":
             console.log("Updating focus: " + message.id);
             document.getElementById(message.id).focus();
             break;
@@ -368,7 +366,7 @@ export class VNoteManager {
             commandMode = false;
             if (event.target.value === "") {
               vscode.postMessage({
-                command: "deleteElement",
+                command: "${DELETE_ELEMENT_MESSAGE}",
                 id: event.target.id,
               });
             }
@@ -385,14 +383,14 @@ export class VNoteManager {
 
               if(event.target.classList.contains("normalText") ){
                 vscode.postMessage({
-                  command: "swapToNewElement",
+                  command: "${SWAP_ELEMENT_MESSAGE}",
                   id: event.target.id,
                   element: element,
                 });
               }
                 else{
                   vscode.postMessage({
-                    command: "addElement",
+                    command: "${ADD_NEW_ELEMENT_MESSAGE}",
                     element: element,
                   });
                 }
@@ -416,7 +414,7 @@ export class VNoteManager {
                   sibling_id: event.target.id
                 };
                 vscode.postMessage({
-                  command: "addElement",
+                  command: "${ADD_NEW_ELEMENT_MESSAGE}",
                   element: element,
                 });
               }
@@ -430,7 +428,7 @@ export class VNoteManager {
                   sibling_id: event.target.id
                 };
                 vscode.postMessage({
-                  command: "addElement",
+                  command: "${ADD_NEW_ELEMENT_MESSAGE}",
                   element: element,
                 });
               }
@@ -442,7 +440,7 @@ export class VNoteManager {
                   id: 100,
                 };
                 vscode.postMessage({
-                  command: "addElement",
+                  command: "${ADD_NEW_ELEMENT_MESSAGE}",
                   element: element,
                 });
               }
@@ -451,8 +449,8 @@ export class VNoteManager {
         });
 
 
-         e.onchange = (event) =>{
-          console.log("onchange"); 
+         e.oninput = (event) =>{
+          console.log("oninput"); 
           let id = event.target.id;
           let content = event.target.value;
           console.log("id: "+ id);
@@ -460,7 +458,7 @@ export class VNoteManager {
 
           // Update the content
           vscode.postMessage({
-            command: "updateContent",
+            command: "${UPDATE_CONTENT_MESSAGE}",
             id: id,
             content: content,
           });
@@ -472,7 +470,7 @@ export class VNoteManager {
         e.onchange = (event) => {
           let id = event.target.id.replace("_box", "");
           vscode.postMessage({
-            command: "toggleTodoItem",
+            command: "${TOGGLE_TODO_MESSAGE}",
             id: id,
           });
         }

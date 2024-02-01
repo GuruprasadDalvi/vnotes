@@ -1,55 +1,64 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
 import { VNote } from "./models/VNote";
 import { VNotesProvider } from "./providers/VNotesProvider";
 import { VNoteManager } from "./manager/VNoteManager";
-import {
-  ListTextContent,
-  TextContent,
-  TodoItem,
-  VNoteContent,
-} from "./models/VNoteContaint";
+import { ListTextContent, TodoItem } from "./models/VNoteContaint";
 import { VNoteElement } from "./models/VNoteElement";
+import {
+  FOCUS_DELAY,
+  NEW_FILE_TEMPLATE,
+  USER_INPUT_MESSAGE,
+  USER_WARNING_MESSAGE,
+  VNOTE_VIEW_NAME,
+} from "./constant/ApplicationConstants";
+import { CREATE_VNOTE, OPEN_VNOTE, REFRESH_VNOTE_PROVIDER } from "./constant/CommandConstants";
+import { ADD_NEW_ELEMENT_MESSAGE, DELETE_ELEMENT_MESSAGE, SWAP_ELEMENT_MESSAGE, TOGGLE_TODO_MESSAGE, UPDATE_CONTENT_MESSAGE, UPDATE_FOCUS_MESSAGE } from "./constant/MessageConstants";
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
   const vnotesProvider = new VNotesProvider();
   const vnoteManager = new VNoteManager();
-  const FOCUS_DELAY = 100;
   let openedVNote: VNote;
+
+  //Map of vnote title to webview panel
   const vnotePanels = new Map<string, vscode.WebviewPanel>();
 
-  vscode.window.registerTreeDataProvider("vnotesView", vnotesProvider);
-  vscode.commands.registerCommand("vnotes.refresh", () =>
+  vscode.window.registerTreeDataProvider(VNOTE_VIEW_NAME, vnotesProvider);
+
+  //Refresh the vnote provider
+  vscode.commands.registerCommand(REFRESH_VNOTE_PROVIDER, () =>
     vnotesProvider.refresh()
   );
 
-  vscode.commands.registerCommand("vnotes.addEntry", async () => {
+  //Create a new note
+  vscode.commands.registerCommand(CREATE_VNOTE, async () => {
     try {
       const noteName = await vscode.window.showInputBox({
-        prompt: "Enter the name of the note",
+        prompt: USER_INPUT_MESSAGE,
       });
+
+      //If the user cancels the input box
       if (!noteName) {
-        vscode.window.showErrorMessage("You must enter a name for the note");
+        vscode.window.showErrorMessage(USER_WARNING_MESSAGE);
         return;
       }
+
+      //Generating the file path
       const dirPath = path.join(
-        process.env.HOME || process.env.USERPROFILE,
+        process.env.HOME || process.env.USERPROFILE || "",
         "vnotes"
       );
+
+      //Creating the directory if it doesn't exist
       if (!fs.existsSync(dirPath)) {
         fs.mkdirSync(dirPath);
       }
+
+      //Creating the file
       const filePath = path.join(dirPath, `${noteName}.vnote`);
       vscode.window.showInformationMessage(`Creating ${filePath}`);
-      fs.writeFileSync(
-        filePath,
-        '[{\n\t"type": "text",\n\t"content": ""\n, "id": 0\n}]'
-      );
+      fs.writeFileSync(filePath, NEW_FILE_TEMPLATE);
       vscode.window.showInformationMessage(`Created ${filePath}`);
       vnotesProvider.refresh();
     } catch (error) {
@@ -57,7 +66,10 @@ export function activate(context: vscode.ExtensionContext) {
     }
   });
 
-  vscode.commands.registerCommand("vnotes.openNote", (vnote: VNote) => {
+  //Open a VNote
+  vscode.commands.registerCommand(OPEN_VNOTE, (vnote: VNote) => {
+
+    //If the vnote is already opened
     if (vnotePanels.has(vnote.title)) {
       const panel = vnotePanels.get(vnote.title);
       if (panel) {
@@ -65,41 +77,42 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
     }
+
     const panel = vscode.window.createWebviewPanel(
-      "vnoteView",
+      VNOTE_VIEW_NAME,
       vnote.title,
       vscode.ViewColumn.One,
-
       {
         enableScripts: true,
         enableCommandUris: true,
       }
     );
+
+    //Handle messages from the webview
     panel.webview.onDidReceiveMessage((message) => {
-      console.log("Received message");
-      console.log(message);
 
       switch (message.command) {
-        case "addElement":
-          console.log("Adding element in message");
+        case ADD_NEW_ELEMENT_MESSAGE:
+          //Generate a new id for the element
           message.element.id = openedVNote.data.getNextId();
-          console.log("new element id: " + message.element);
 
           //Handling the case of a bullate list
           if (message.element.type == "bl") {
+            //Generate a new id for the first element of the list
             message.element.content[0].id = openedVNote.data.getNextId();
           }
           //Handling the case of a todo list
           else if (message.element.type == "todoList") {
+            //Generate a new id for the first element of the list
             message.element.content[0].id = openedVNote.data.getNextId();
           } else if (message.element.type == "todoItem") {
-            //SPACIAL CASE TodoItem
+            //SPACIAL CASE TodoItem, create a new todo item
             let sibling = openedVNote.data.getElementById(
               +message.element.sibling_id
             );
-            let parent_id = sibling.parent_id;
+            let parent_id = sibling?.parent_id || 0;
             let parent = openedVNote.data.idMap.get(parent_id);
-            parent.list.push(
+            parent?.list.push(
               new TodoItem(
                 message.element.content,
                 false,
@@ -114,7 +127,7 @@ export function activate(context: vscode.ExtensionContext) {
             //sleep for 500ms
             setTimeout(() => {
               panel.webview.postMessage({
-                command: "updateFocus",
+                command: UPDATE_FOCUS_MESSAGE,
                 id: message.element.id,
               });
             }, FOCUS_DELAY);
@@ -124,14 +137,14 @@ export function activate(context: vscode.ExtensionContext) {
             let sibling = openedVNote.data.getElementById(
               +message.element.sibling_id
             );
-            let parent_id = sibling.parent_id;
+            let parent_id = sibling?.parent_id || 0;
             let parent = openedVNote.data.idMap.get(parent_id);
             let lt = new ListTextContent(
               message.element.content,
               message.element.id
             );
             lt.parent_id = parent_id;
-            parent.list.push(lt);
+            parent?.list.push(lt);
             openedVNote.save();
             openedVNote.data.createIDMap();
             panel.webview.html = vnoteManager.getHTMLContent(vnote);
@@ -139,7 +152,7 @@ export function activate(context: vscode.ExtensionContext) {
 
             setTimeout(() => {
               panel.webview.postMessage({
-                command: "updateFocus",
+                command: UPDATE_FOCUS_MESSAGE,
                 id: message.element.id,
               });
             }, FOCUS_DELAY);
@@ -150,14 +163,10 @@ export function activate(context: vscode.ExtensionContext) {
           vnoteManager.addElement(openedVNote, vnoteElement);
           panel.webview.html = vnoteManager.getHTMLContent(vnote);
           if (message.element.type == "bl") {
-            console.log(
-              "Updating focus to first element of list: " +
-                message.element.content[0].id
-            );
 
             setTimeout(() => {
               panel.webview.postMessage({
-                command: "updateFocus",
+                command: UPDATE_FOCUS_MESSAGE,
                 id: message.element.content[0].id,
               });
             }, FOCUS_DELAY);
@@ -169,7 +178,7 @@ export function activate(context: vscode.ExtensionContext) {
 
             setTimeout(() => {
               panel.webview.postMessage({
-                command: "updateFocus",
+                command: UPDATE_FOCUS_MESSAGE,
                 id: message.element.content[0].id,
               });
             }, FOCUS_DELAY);
@@ -178,25 +187,25 @@ export function activate(context: vscode.ExtensionContext) {
 
             setTimeout(() => {
               panel.webview.postMessage({
-                command: "updateFocus",
+                command: UPDATE_FOCUS_MESSAGE,
                 id: message.element.id,
               });
             }, FOCUS_DELAY);
           }
           break;
-        case "updateContent":
+        case UPDATE_CONTENT_MESSAGE:
           const id = message.id;
           const content = message.content;
           vnoteManager.updateElement(openedVNote, id, content);
-          panel.webview.html = vnoteManager.getHTMLContent(vnote);
+          // panel.webview.html = vnoteManager.getHTMLContent(vnote);
           break;
-        case "toggleTodoItem":
+        case TOGGLE_TODO_MESSAGE:
           console.log("Toggling todo item");
           const todoId = message.id;
           vnoteManager.toggleTodoItem(openedVNote, todoId);
           panel.webview.html = vnoteManager.getHTMLContent(vnote);
           break;
-        case "deleteElement":
+        case DELETE_ELEMENT_MESSAGE:
           console.log("Deleting element");
           const elementId = message.id;
           const focusID = vnoteManager.deleteElement(openedVNote, elementId);
@@ -205,33 +214,20 @@ export function activate(context: vscode.ExtensionContext) {
             console.log("Updating focus to element: " + focusID);
             setTimeout(() => {
               panel.webview.postMessage({
-                command: "updateFocus",
+                command: UPDATE_FOCUS_MESSAGE,
                 id: focusID,
               });
             }, FOCUS_DELAY);
           } else {
             setTimeout(() => {
               panel.webview.postMessage({
-                command: "updateFocus",
+                command: UPDATE_FOCUS_MESSAGE,
                 id: message.element.id,
               });
             }, FOCUS_DELAY);
           }
           break;
-        case "swapToText":
-          console.log("Swapping to text");
-          const textId = message.id;
-          vnoteManager.swapToText(openedVNote, textId);
-          panel.webview.html = vnoteManager.getHTMLContent(vnote);
-
-          setTimeout(() => {
-            panel.webview.postMessage({
-              command: "updateFocus",
-              id: message.element.id,
-            });
-          }, FOCUS_DELAY);
-          break;
-        case "swapToNewElement":
+        case SWAP_ELEMENT_MESSAGE:
           console.log("Swapping to new element");
           const newElementId = +message.id;
           message.element.id = newElementId;
@@ -255,13 +251,15 @@ export function activate(context: vscode.ExtensionContext) {
           panel.webview.html = vnoteManager.getHTMLContent(vnote);
           setTimeout(() => {
             panel.webview.postMessage({
-              command: "updateFocus",
+              command: UPDATE_FOCUS_MESSAGE,
               id: idToFocus,
             });
           }, FOCUS_DELAY);
           break;
       }
     });
+
+
     const isDarkMode =
       vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.Dark;
     panel.iconPath = vscode.Uri.file(
