@@ -123,7 +123,9 @@ export class VNoteManager {
           align-items: center;
           cursor: pointer;
           margin-left: 10px;
-          margin-right: 10px;
+          margin-right: 30px;
+          outline: none;
+          border: none;
           opacity: 0; /* make the button invisible initially */
           transition: opacity 0.3s;
         }
@@ -174,8 +176,9 @@ export class VNoteManager {
           list-style: none;
           box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
           z-index: 100;
-          display: none;
-          opacity: 0.9;
+          display: block;
+          opacity: 0;
+          transition: 400ms ease all;
         }
         .tooltipList li {
           border-bottom: 1px solid #bbbbbb;
@@ -192,6 +195,10 @@ export class VNoteManager {
           border-bottom: none;
         }
         .tooltipList li button:hover {
+          font-weight: bold;
+        }
+        .focused_item {
+          border: 1px solid red;
           font-weight: bold;
         }
       </style>
@@ -281,7 +288,7 @@ export class VNoteManager {
       };
       function populateListAction(elementName) {
         elementName = elementName.replace("/", "");
-  
+        let count = 0;
         document.getElementById("tooltipList").innerHTML = "";
         const tooltipList = document.getElementById("tooltipList");
         for (const [key, value] of Object.entries(actionElements)) {
@@ -324,36 +331,39 @@ export class VNoteManager {
 
       document.getElementsByName("editor").forEach((e) => {
         e.addEventListener("keydown", function (event) {
+          console.log("key pressed: " + event.key);
           if (commandMode) {
             populateListAction(event.target.value + event.key);
           }
+          //Move focus to next child if command mode is active and user down arrow key
+         
           if (event.key === "/") {
             // Show command menu
             let tootTip = document.getElementById("tooltipList");
-            tootTip.style.display = "block";
             const caretPosition = getCaretCoordinates();
   
             tootTip.style.top = caretPosition.y + 30 + "px";
             tootTip.style.left = caretPosition.x + "px";
+            tootTip.style.opacity = "1";
             commandMode = true;
   
             populateListAction(event.target.value);
           }
           if (event.key === "Escape") {
             // Hide command menu
-            document.getElementById("tooltipList").style.display = "none";
+            document.getElementById("tooltipList").style.opacity = "0";
             document.getElementById("tooltipList").innerHTML = "";
             commandMode = false;
           }
           if (event.key === " ") {
             // Hide command menu
-            document.getElementById("tooltipList").style.display = "none";
+            document.getElementById("tooltipList").style.opacity = "0";
             document.getElementById("tooltipList").innerHTML = "";
             commandMode = false;
           }
           if (event.key === "Backspace") {
             // Hide command menu
-            document.getElementById("tooltipList").style.display = "none";
+            document.getElementById("tooltipList").style.opacity = "0";
             document.getElementById("tooltipList").innerHTML = "";
             commandMode = false;
             if (event.target.value === "") {
