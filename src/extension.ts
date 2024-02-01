@@ -16,6 +16,7 @@ export function activate(context: vscode.ExtensionContext) {
   const vnoteManager = new VNoteManager();
   const FOCUS_DELAY = 100;
   let openedVNote: VNote;
+  const vnotePanels = new Map<string, vscode.WebviewPanel>();
 
 
   vscode.window.registerTreeDataProvider("vnotesView", vnotesProvider);
@@ -50,6 +51,15 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   vscode.commands.registerCommand("vnotes.openNote", (vnote: VNote) => {
+
+    if(vnotePanels.has(vnote.title)){
+      const panel = vnotePanels.get(vnote.title);
+      if (panel) {
+          panel.reveal(vscode.ViewColumn.One);
+          return;
+      }
+    
+    }
     const panel = vscode.window.createWebviewPanel(
       "vnoteView",
       vnote.title,
@@ -234,6 +244,11 @@ export function activate(context: vscode.ExtensionContext) {
 
     });
 
+    vnotePanels.set(vnote.title, panel);
+
+    panel.onDidDispose(() => {
+      vnotePanels.delete(vnote.title);
+    });
     vnote.loadData();
     const content = vnoteManager.getHTMLContent(vnote);
     console.log("Opening note");
