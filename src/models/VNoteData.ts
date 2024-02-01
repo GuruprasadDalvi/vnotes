@@ -6,6 +6,7 @@ export class VNoteData {
   idMap!: Map<number, VNoteContent>;
   maxId: number = -1;
   sortedIds: number[] = [];
+  metadata: object = {};
   constructor(elements: VNoteElement[]) {
     this.elements = elements;
   }
@@ -27,7 +28,11 @@ export class VNoteData {
       const obj = element.toObject();
       data.push(obj);
     }
-    return JSON.stringify(data, null, 4);
+    const output = {
+      "metadata": this.metadata,
+      "data": data
+    }
+    return JSON.stringify(output, null, 4);
   }
 
   static fromVNoteData(data: string): VNoteData {
@@ -40,8 +45,9 @@ export class VNoteData {
    * @param data json data from the file
    * @returns vnoteData
    */
-  static fromJSON(data: any): VNoteData {
-    const elements = JSON.parse(data);
+  static fromJSON(jsonString: any): VNoteData {
+    const jsonData = JSON.parse(jsonString);
+    const elements = jsonData["data"] || JSON.parse("[]")
     let newElements = [];
     for (let i = 0; i < elements.length; i++) {
       let element = elements[i];
@@ -50,7 +56,9 @@ export class VNoteData {
     }
     console.log("newElements");
     console.log(newElements);
-    return new VNoteData(newElements);
+    const vnoteData = new VNoteData(newElements);
+    vnoteData.metadata = jsonData["metadata"] || JSON.parse("{}")
+    return vnoteData;
   }
 
   addElement(element: VNoteElement) {
