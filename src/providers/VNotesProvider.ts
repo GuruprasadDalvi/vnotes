@@ -55,13 +55,12 @@ class VNoteNode extends vscode.TreeItem {
         public vnote: VNote,
         public readonly label: string,
         public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-        // public readonly iconPath = 'src/resources/dependency.svg'
     ) {
         super(label, collapsibleState);
         this.tooltip = `${this.vnote.filePath}`;
         this.iconPath = {
-            light: path.join(__dirname, '..', '..','src', 'resources','light', 'Note.svg'),
-            dark: path.join(__dirname, '..', '..','src', 'resources','dark', 'Note.svg')
+            light: path.join(__dirname, '..', '..', 'resources','light', 'Note.svg'),
+            dark: path.join(__dirname, '..', '..', 'resources','dark', 'Note.svg')
         };
     }
 }

@@ -20,7 +20,7 @@ export function activate(context: vscode.ExtensionContext) {
   const vnotesProvider = new VNotesProvider();
   const vnoteManager = new VNoteManager();
   let openedVNote: VNote;
-
+  
   //Map of vnote title to webview panel
   const vnotePanels = new Map<string, vscode.WebviewPanel>();
 
@@ -266,7 +266,6 @@ export function activate(context: vscode.ExtensionContext) {
       path.join(
         __dirname,
         "..",
-        "src",
         "resources",
         isDarkMode ? "dark" : "light",
         "Note.svg"

@@ -3,10 +3,17 @@
   "displayName": "vnotes: Elemental note editor",
   "publisher": "GuruprasadDalvi",
   "description": "Vs code extenstion to save notes globally",
-  "version": "1.0.0",
+  "version": "1.0.5",
+  "icon": "resources/AppIcon.png",
+  "galleryBanner": {
+    "color": "#007ACC",
+    "theme": "dark"
+  },
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/GuruprasadDalvi/vnotes"},
+    "url": "https://github.com/GuruprasadDalvi/vnotes"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -20,8 +27,7 @@
       {
         "command": "vnotes.addEntry",
         "title": "Add VNote",
-        "category": "VNotes",
-        "icon": "src/resources/AppIcon.svg"
+        "category": "VNotes"
       }
     ],
     "viewsWelcome": [
@@ -51,7 +57,7 @@
         {
           "id": "vnotes",
           "title": "vnotes",
-          "icon": "src/resources/AppIcon.svg"
+          "icon": "resources/AppIcon.svg"
         }
       ]
     }
