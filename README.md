@@ -22,6 +22,25 @@ Please report any issues you encounter while using this extension.
 
 Initial release of vnotes.
 
+### 1.0.1
+Typo FIxes
+
+### 1.0.2
+Minor Bug Fixes
+
+### 1.0.3
+Minor Bug Fixes
+
+### 1.0.4
+Minor Bug Fixes
+
+### 1.0.5
+Added Icon to the extension
+
+### 1.0.6
+Updated README
+Updated Icon
+
 ---
 
 **Enjoy!**
