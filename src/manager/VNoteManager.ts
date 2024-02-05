@@ -178,25 +178,36 @@ export class VNoteManager {
         }
         .tooltipList {
           position: absolute;
-          width: 80px;
+          width: 100px;
           top: 0;
           left: 0;
           list-style: none;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+          box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
           z-index: 100;
           display: block;
           opacity: 0;
           transition: 400ms ease all;
+          background-color: var(--vscode-editor-background);
+          color: var(--vscode-editor-foreground);
+          border: 2px solid var(--vscode-editor-hoverHighlightBackground);
+          border-radius: 5px;
         }
         .tooltipList li {
-          border-bottom: 1px solid #bbbbbb;
+          background-color: var(--vscode-editor-background);
+          padding: 5px;
+          border-bottom: 1px solid var(--vscode-editor-hoverHighlightBackground);
         }
         .tooltipList li button {
           outline: none;
           border: none;
-          padding: 5px;
+          background-color: var(--vscode-editor-background);
+          color: var(--vscode-editor-foreground);
+          padding: 8px 8px 8px 5px;
           width: 100%;
           text-align: left;
+          font-size: 1em;
+          font-weight: bold;
+          transition: 400ms ease all;
           cursor: pointer;
         }
         .tooltipList li button:last-child {
@@ -204,6 +215,7 @@ export class VNoteManager {
         }
         .tooltipList li button:hover {
           font-weight: bold;
+          font-size: 1.2em;
         }
         .focused_item {
           border: 1px solid red;
@@ -230,23 +242,27 @@ export class VNoteManager {
       let commandMode = false;
       
       const actionElements = {
-        h1: {
+        "Heading 1": {
           type: "h1",
           content: "",
+          description: "Add a new h1 element",
           id: 1,
         },
-        h2: {
+        "Heading 2": {
           type: "h2",
           content: "",
+          description: "Add a new h2 element",
           id: 2,
         },
-        h3: {
+        "Heading 3": {
           type: "h3",
           content: "",
+          description: "Add a new h3 element",
           id: 3,
         },
-        todoList: {
+        "Todo List": {
           type: "todoList",
+          description: "Add a new list with checkbox",
           content: [
             {
               type: "todoItem",
@@ -257,13 +273,15 @@ export class VNoteManager {
           ],
           id: 9,
         },
-        text: {
+        Text: {
           type: "text",
           content: "",
+          description: "Add a new text element",
           id: 16,
         },
-        "bullet List": {
+        "Bullet List": {
           type: "bl",
+          description: "Add a new bullet list",
           content: [
             {
               type: "text",
