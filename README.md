@@ -41,6 +41,10 @@ Added Icon to the extension
 Updated README
 Updated Icon
 
+### 1.0.7
+Updated README
+Updated style for tooltip
+
 ---
 
 **Enjoy!**

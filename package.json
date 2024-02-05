@@ -3,7 +3,7 @@
   "displayName": "vnotes: Elemental note editor",
   "publisher": "GuruprasadDalvi",
   "description": "Vs code extenstion to save notes globally",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "icon": "resources/AppIcon.png",
   "galleryBanner": {
     "color": "#007ACC",
