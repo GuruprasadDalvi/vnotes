@@ -1,4 +1,4 @@
-# vnotes README
+# VNotes README
 
 `vnotes` is a Visual Studio Code extension that provides a simple and intuitive way to manage and organize your notes right within your editor. It allows you to create, open, and manage notes in a tree-like structure, making it easy to keep track of your thoughts and ideas.
 

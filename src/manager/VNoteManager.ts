@@ -105,10 +105,20 @@ export class VNoteManager {
           color: var(--vscode-editor-foreground);
         }
         input[type="text"] {
+          border: 0;
+          outline: none;
           transition: 0.4s ease-in-out;
         }
         input:focus {
           outline: none;
+          border-bottom: 1px solid;
+        }
+        textarea {
+          outline: none;
+        }
+        textarea: focus {
+          outline: none;
+          border: none;
           border-bottom: 1px solid;
         }
         .add_button {
@@ -322,8 +332,10 @@ export class VNoteManager {
       document.getElementsByName("editor").forEach((e) => {
         if(e.classList.contains("normalText") ){
         e.style.height = "";
+        console.log("e.scrollHeight: " + e.scrollHeight); 
+        console.log(e);
         e.style.height = e.scrollHeight + "px"
-        }
+      }
       });
 
 

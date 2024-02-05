@@ -65,7 +65,7 @@ export class TextContent extends VNoteContent {
   }
 
   toHTML(): string {
-    return `<div class="container"> <button class="add_button" onclick="addElement()">+</button><textarea id="${this.id}" class="text normalText" tabindex="${this.id}" style="height: fit-content;"  placeholder="type '/' to enter command mode" name="editor" >${this.text}</textarea> <br/></div>`;
+    return `<div class="container"> <button class="add_button" onclick="addElement()">+</button><textarea id="${this.id}" class="text normalText" tabindex="${this.id}" style="height: fit-content;" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"' onblur='this.style.height = "";this.style.height = this.scrollHeight + "px"'  placeholder="type '/' to enter command mode" name="editor" >${this.text}</textarea> <br/></div>`;
   }
   fromJSON(data: any): VNoteContent {
     return new TextContent(data.text, data.id);
