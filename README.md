@@ -19,31 +19,35 @@ Please report any issues you encounter while using this extension.
 ## Release Notes
 
 ### 1.0.0
-
-Initial release of vnotes.
+* Initial release of vnotes.
 
 ### 1.0.1
-Typo FIxes
+* Typo FIxes
 
 ### 1.0.2
-Minor Bug Fixes
+* Minor Bug Fixes
 
 ### 1.0.3
-Minor Bug Fixes
+* Minor Bug Fixes
 
 ### 1.0.4
-Minor Bug Fixes
+* Minor Bug Fixes
 
 ### 1.0.5
-Added Icon to the extension
+* Added Icon to the extension
 
 ### 1.0.6
-Updated README
-Updated Icon
+* Updated README
+* Updated Icon
 
 ### 1.0.7
-Updated README
-Updated style for tooltip
+* Updated README
+* Updated style for tooltip
+
+### 1.0.8
+* Updated README
+* Updated style for tooltip
+* Minor Bug Fixes
 
 ---
 

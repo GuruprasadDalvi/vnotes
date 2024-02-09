@@ -200,7 +200,7 @@ export class VNoteManager {
         .tooltipList li button {
           outline: none;
           border: none;
-          background-color: var(--vscode-editor-background);
+          background-color: transparent;
           color: var(--vscode-editor-foreground);
           padding: 8px 8px 8px 5px;
           width: 100%;
@@ -215,10 +215,10 @@ export class VNoteManager {
         }
         .tooltipList li button:hover {
           font-weight: bold;
-          font-size: 1.2em;
+          font-size: 1.1em;
         }
         .focused_item {
-          border: 1px solid red;
+          background-color: var(--vscode-editorLineNumber-activeForeground);
           font-weight: bold;
         }
       </style>
@@ -231,7 +231,7 @@ export class VNoteManager {
       <hr />
       ${generatedHTML}
       <div class="container"> 
-        <INPUT id="newItem" class="text" tabindex="-1"  placeholder="type '/' to add new element" name="editor" value='' /> 
+        <INPUT id="newItem" class="text" tabindex="-1"  placeholder="type '/' to add new element" name="editor" value='' oninput="addElement()" /> 
         <br/>
       </div>
       <br />
@@ -314,11 +314,14 @@ export class VNoteManager {
       };
       function populateListAction(elementName) {
         elementName = elementName.replace("/", "");
+        elementName = elementName.replace("Shift", "");
+        elementName = elementName.toLowerCase();
         let count = 0;
         document.getElementById("tooltipList").innerHTML = "";
         const tooltipList = document.getElementById("tooltipList");
         for (const [key, value] of Object.entries(actionElements)) {
-          if (key.includes(elementName)) {
+          console.log("key: " + key+" elementName: " + elementName);
+          if (key.toLowerCase().includes(elementName)) {
             let li = document.createElement("li");
             li.setAttribute("id", key);
             let button = document.createElement("button");
@@ -329,6 +332,17 @@ export class VNoteManager {
                 element: value,
               });
             });
+            if (count === 0) {
+              
+              li.style.backgroundColor = "var(--vscode-editorLineNumber-activeForeground)";
+              li.style.fontSize = "1.1em";
+            }
+            else{
+              li.style.backgroundColor = "var(--vscode-editor-background)";
+              li.style.fontSize = "1em";
+            }
+            
+            count++;
             li.appendChild(button);
             tooltipList.appendChild(li);
           }
@@ -341,7 +355,15 @@ export class VNoteManager {
         switch (message.command) {
           case "${UPDATE_FOCUS_MESSAGE}":
             console.log("Updating focus: " + message.id);
-            document.getElementById(message.id).focus();
+            let element = document.getElementById(message.id);
+            if (element) {
+              element.focus();
+            }
+            else{
+              console.log("Element not found so focusing on newItem");
+              element = document.getElementById("newItem");
+              element.focus();
+            }
             break;
         }
       }
@@ -360,6 +382,11 @@ export class VNoteManager {
       document.getElementsByName("editor").forEach((e) => {
         e.addEventListener("keydown", function (event) {
           console.log("key pressed: " + event.key);
+          if (event.target.value === "") {
+            commandMode = false;
+            document.getElementById("tooltipList").style.opacity = "0";
+            document.getElementById("tooltipList").innerHTML = "";
+          }
           if (commandMode) {
             populateListAction(event.target.value + event.key);
           }
@@ -370,12 +397,13 @@ export class VNoteManager {
             let tootTip = document.getElementById("tooltipList");
             const caretPosition = getCaretCoordinates();
   
+            populateListAction(event.target.value);
+
             tootTip.style.top = caretPosition.y + 30 + "px";
             tootTip.style.left = caretPosition.x + "px";
             tootTip.style.opacity = "1";
             commandMode = true;
   
-            populateListAction(event.target.value);
           }
           if (event.key === "Escape") {
             // Hide command menu
@@ -391,9 +419,9 @@ export class VNoteManager {
           }
           if (event.key === "Backspace") {
             // Hide command menu
-            document.getElementById("tooltipList").style.opacity = "0";
-            document.getElementById("tooltipList").innerHTML = "";
-            commandMode = false;
+            // document.getElementById("tooltipList").style.opacity = "0";
+            // document.getElementById("tooltipList").innerHTML = "";
+            // commandMode = false;
             if (event.target.value === "") {
               vscode.postMessage({
                 command: "${DELETE_ELEMENT_MESSAGE}",
